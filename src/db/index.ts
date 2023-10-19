@@ -1,13 +1,14 @@
-import 'dotenv/config'
-import { drizzle } from "drizzle-orm/postgres-js";
-import { migrate } from "drizzle-orm/postgres-js/migrator";
-import postgres from "postgres";
+import { drizzle } from "drizzle-orm/vercel-postgres";
+import { migrate } from "drizzle-orm/vercel-postgres/migrator";
+import { sql } from "@vercel/postgres";
+import "dotenv/config";
+require("dotenv").config();
 
+const migrateDB = async () => {
+  const db = drizzle(sql);
 
-const connectionString = process.env.POSTGRES_URL + "?sslmode=require";
-if (!connectionString) throw new Error("POSTGRES_URL does not exists in .env");
+  await migrate(db, { migrationsFolder: "drizzle" });
+  console.log("Drizzle migration completed");
+};
 
-const sql = postgres(connectionString, { max: 1 })
-const db = drizzle(sql);
- 
-await migrate(db, { migrationsFolder: "drizzle" });
+migrateDB();
