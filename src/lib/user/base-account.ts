@@ -1,6 +1,6 @@
 import db from "../db/db"
 import { Account } from "../db/schema";
-import { IAccount } from "./account.interface";
+import { AccountDetails, IAccount } from "./account.interface";
 import { eq } from "drizzle-orm";
 import { IPerference, type preference } from "./preference.interface";
 
@@ -21,6 +21,20 @@ export abstract class BaseAccount implements IAccount, IPerference {
                 transfer_limit: "1000"
             })
             .returning();
+
+        return result[0];
+    }
+
+    public async getAccountDetails(): Promise<AccountDetails> {
+        const result = await db
+            .select({
+                account_id: Account.account_id,
+                user_id: Account.user_id,
+                balance: Account.balance,
+                created_at: Account.created_at
+            })
+            .from(Account)
+            .where(eq(Account.account_id, this.account_id));
 
         return result[0];
     }

@@ -1,5 +1,12 @@
 import { Account } from "../db/schema";
 
+export interface AccountDetails {
+    account_id: string,
+    user_id: string,
+    balance: string,
+    created_at: Date
+}
+
 /**
  * Interface for User's bank account
  * 
@@ -13,4 +20,11 @@ export interface IAccount {
      * @returns {Promise<typeof Account.$inferSelect>} Account created
      */
     createAccount: (user_id: string) => Promise<typeof Account.$inferSelect>;
+
+    /**
+     * Get account details
+     * 
+     * @returns {Promise<AccountDetails>} All details of bank account
+     */
+    getAccountDetails: () => Promise<AccountDetails>;
 }
