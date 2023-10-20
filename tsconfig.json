@@ -27,7 +27,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/db/index.ts"
+    "src/db/migrate.ts"
   ],
   "exclude": ["node_modules"],
   "ts-node": {
