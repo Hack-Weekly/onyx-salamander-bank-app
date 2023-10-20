@@ -1,4 +1,4 @@
-import { type NextRequest } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import { SavingsAccount } from "@/lib/user/savings-account";
 import { IAccount } from "@/lib/user/account.interface";
 
@@ -9,5 +9,5 @@ export async function POST (req: NextRequest) {
     const account: IAccount = new SavingsAccount();
     const result = await account.createAccount(user_id);
 
-    return Response.json(result);
+    return NextResponse.json(result, { status: 201 });
 }
