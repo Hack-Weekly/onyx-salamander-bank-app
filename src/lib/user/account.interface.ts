@@ -1,4 +1,4 @@
-import { Account } from "../db/schema";
+import { Account, Transaction } from "../db/schema";
 
 export interface AccountDetails {
     account_id: string,
@@ -27,4 +27,13 @@ export interface IAccount {
      * @returns {Promise<AccountDetails>} All details of bank account
      */
     getAccountDetails: () => Promise<AccountDetails>;
+
+    /**
+     * Transfer money to another bank account
+     * 
+     * @param {string} transfer_to - Account id to transfer to
+     * @param {string} amount - Amount to transfer
+     * @return {Promise<typeof Transaction.$inferSelect>} Transaction information
+     */
+    transferMoney: (transfer_to: string, amount: string) => Promise<typeof Transaction.$inferSelect>;
 }

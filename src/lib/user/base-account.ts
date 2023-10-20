@@ -1,7 +1,7 @@
 import db from "../db/db"
-import { Account } from "../db/schema";
+import { Account, Transaction, statusEnum } from "../db/schema";
 import { AccountDetails, IAccount } from "./account.interface";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { IPerference, type preference } from "./preference.interface";
 
 export abstract class BaseAccount implements IAccount, IPerference {
@@ -36,6 +36,44 @@ export abstract class BaseAccount implements IAccount, IPerference {
             .from(Account)
             .where(eq(Account.account_id, this.account_id));
 
+        return result[0];
+    }
+
+    public async transferMoney(transfer_to: string, amount: string): Promise<typeof Transaction.$inferSelect> {
+        const result = await db.transaction( async tx => {
+            const [ account ] = await tx.select({
+                amount: Account.balance
+            })
+                .from(Account)
+                .where(eq(Account.account_id, this.account_id));
+
+            if (Number(account.amount) < Number(amount)) return await tx.rollback();
+
+            await tx
+                .update(Account)
+                .set({
+                    balance: sql`${ Account.balance } - ${ amount }`
+                })
+                .where(eq(Account.account_id, this.account_id));
+            await tx
+                .update(Account)
+                .set({
+                    balance: sql`${ Account.balance } + ${ amount }`
+                })
+                .where(eq(Account.account_id, transfer_to));
+            const transaction = await tx
+                .insert(Transaction)
+                .values({
+                    from_account_id: this.account_id,
+                    to_account_id: transfer_to,
+                    amount: amount,
+                    status: statusEnum.enumValues[1]
+                })
+                .returning();
+
+            return transaction;
+        });
+           
         return result[0];
     }
 
