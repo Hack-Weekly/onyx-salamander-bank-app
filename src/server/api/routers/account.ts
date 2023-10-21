@@ -1,6 +1,6 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-import { Account } from "@/server/db/schema";
-import { and, eq } from "drizzle-orm";
+import { Account, Transaction, statusEnum } from "@/server/db/schema";
+import { and, eq, sql } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -63,6 +63,51 @@ export const accountRouter = createTRPCRouter({
         .limit(1);
 
       return result[0];
+    }),
+  transferMoney: protectedProcedure
+    .input(
+      z.object({
+        transfer_to: z.string(),
+        amount: z.string()
+      })
+    )
+    .query( async ({ ctx, input }) => {
+      const result = await ctx.db.transaction( async (tx) => {
+        const [account] = await tx
+          .select({
+            amount: Account.balance,
+          })
+          .from(Account)
+          .where(eq(Account.account_id, ctx.auth.userId));
+  
+        if (Number(account.amount) < Number(input.amount)) return await tx.rollback();
+  
+        await tx
+          .update(Account)
+          .set({
+            balance: sql`${Account.balance} - ${input.amount}`,
+          })
+          .where(eq(Account.account_id, ctx.auth.userId));
+        await tx
+          .update(Account)
+          .set({
+            balance: sql`${Account.balance} + ${input.amount}`,
+          })
+          .where(eq(Account.account_id, input.transfer_to));
+        const transaction = await tx
+          .insert(Transaction)
+          .values({
+            from_account_id: ctx.auth.userId,
+            to_account_id: input.transfer_to,
+            amount: input.amount,
+            status: statusEnum.enumValues[1],
+          })
+          .returning();
+  
+        return transaction;
+      });
+
+      return result;
     }),
   create: protectedProcedure.mutation(async ({ ctx }) => {
     const result = await ctx.db

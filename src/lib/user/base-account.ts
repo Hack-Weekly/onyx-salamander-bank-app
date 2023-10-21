@@ -1,4 +1,4 @@
-import db from "@/server/db";
+import { db } from "@/server/db";
 import { Account, Transaction, statusEnum } from "../../server/db/schema";
 import { AccountDetails, IAccount } from "./account.interface";
 import { eq, sql } from "drizzle-orm";
