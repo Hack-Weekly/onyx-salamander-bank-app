@@ -31,11 +31,6 @@ const generateAccountNumber = () => {
 };
 
 export const accountRouter = createTRPCRouter({
-  test: publicProcedure.query(({ ctx }) => {
-    return {
-      greeting: `Hello ${ctx.auth.userId}`,
-    };
-  }),
   list: protectedProcedure.query(async ({ ctx }) => {
     const result = await ctx.db
       .select({
