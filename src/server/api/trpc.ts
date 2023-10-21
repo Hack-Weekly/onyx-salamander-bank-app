@@ -23,7 +23,7 @@ import type {
   SignedOutAuthObject,
 } from "@clerk/nextjs/api";
 
-import db from "../db";
+import { db } from "../db";
 
 interface AuthContext {
   auth: SignedInAuthObject | SignedOutAuthObject;
