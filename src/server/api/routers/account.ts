@@ -67,7 +67,6 @@ export const accountRouter = createTRPCRouter({
   transferMoney: protectedProcedure
     .input(
       z.object({
-        account_id: z.string(),
         transfer_to: z.string(),
         amount: z.string()
       })
@@ -79,7 +78,7 @@ export const accountRouter = createTRPCRouter({
             amount: Account.balance,
           })
           .from(Account)
-          .where(eq(Account.account_id, input.account_id));
+          .where(eq(Account.account_id, ctx.auth.userId));
   
         if (Number(account.amount) < Number(input.amount)) return await tx.rollback();
   
@@ -88,7 +87,7 @@ export const accountRouter = createTRPCRouter({
           .set({
             balance: sql`${Account.balance} - ${input.amount}`,
           })
-          .where(eq(Account.account_id, input.account_id));
+          .where(eq(Account.account_id, ctx.auth.userId));
         await tx
           .update(Account)
           .set({
@@ -98,7 +97,7 @@ export const accountRouter = createTRPCRouter({
         const transaction = await tx
           .insert(Transaction)
           .values({
-            from_account_id: input.account_id,
+            from_account_id: ctx.auth.userId,
             to_account_id: input.transfer_to,
             amount: input.amount,
             status: statusEnum.enumValues[1],
