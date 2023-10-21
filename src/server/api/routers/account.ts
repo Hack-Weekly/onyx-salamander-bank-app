@@ -1,7 +1,8 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { Account } from "@/server/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
 
 const insertAccountPreferenceSchema = createInsertSchema(Account, {}).pick({
   transfer_limit: true,
@@ -39,14 +40,35 @@ export const accountRouter = createTRPCRouter({
     const result = await ctx.db
       .select({
         account_id: Account.account_id,
-        balance: Account.balance,
-        transfer_limit: Account.transfer_limit,
       })
       .from(Account)
       .where(eq(Account.user_id, ctx.auth.userId));
 
     return result;
   }),
+  getAccountDetail: protectedProcedure
+    .input(
+      z.object({
+        account_id: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const result = await ctx.db
+        .select({
+          balance: Account.balance,
+          transfer_limit: Account.transfer_limit,
+        })
+        .from(Account)
+        .where(
+          and(
+            eq(Account.user_id, ctx.auth.userId),
+            eq(Account.account_id, input.account_id)
+          )
+        )
+        .limit(1);
+
+      return result[0];
+    }),
   create: protectedProcedure.mutation(async ({ ctx }) => {
     const result = await ctx.db
       .insert(Account)
