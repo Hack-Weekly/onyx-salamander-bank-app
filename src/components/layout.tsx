@@ -33,6 +33,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         ) : (
           <div>Create Account</div>
         )}
+        <UserButton afterSignOutUrl="/"/>
       </SignedIn>
       <SignedOut>{children}</SignedOut>
     </main>
