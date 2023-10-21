@@ -1,6 +1,6 @@
 import { MainNav } from "@/components/main-nav";
 import { useAccountStore } from "@/lib/store";
-import { UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { Inter } from "next/font/google";
 import { useEffect, useState } from "react";
 
@@ -19,19 +19,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <main className={inter.className}>
-      {hasAccount ? (
-        <>
-          <div className="flex h-16 items-center px-4 border-b">
-            <MainNav className="mx-6" />
-            <div className="ml-auto flex items-center space-x-4">
-              <UserButton afterSignOutUrl="/" />
+      <SignedIn>
+        {hasAccount ? (
+          <>
+            <div className="flex h-16 items-center px-4 border-b">
+              <MainNav className="mx-6" />
+              <div className="ml-auto flex items-center space-x-4">
+                <UserButton afterSignOutUrl="/" />
+              </div>
             </div>
-          </div>
-          {children}
-        </>
-      ) : (
-        <div>Create Account</div>
-      )}
+            {children}
+          </>
+        ) : (
+          <div>Create Account</div>
+        )}
+      </SignedIn>
+      <SignedOut>{children}</SignedOut>
     </main>
   );
 }
