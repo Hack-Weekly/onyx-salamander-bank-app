@@ -1,11 +1,8 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import Link from "next/link";
 
 import { api } from "@/lib/api";
-import { MainNav } from "@/components/main-nav";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { UserButton } from "@clerk/nextjs";
 import { useAccountStore } from "@/lib/store";
 
 const Home: NextPage = () => {
@@ -29,7 +26,7 @@ const Home: NextPage = () => {
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           {isLoading ? (
             "Loading..."
-          ) : (
+          ) : account ? (
             <>
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -48,13 +45,17 @@ const Home: NextPage = () => {
                   </svg>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">${account!.balance}</div>
+                  <div className="text-2xl font-bold">
+                    ${Number(account.balance).toFixed(2)}
+                  </div>
                   <p className="text-xs text-muted-foreground">
                     show growth from last month?
                   </p>
                 </CardContent>
               </Card>
             </>
+          ) : (
+            "No account"
           )}
         </div>
       </div>
