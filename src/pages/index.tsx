@@ -4,14 +4,30 @@ import Head from "next/head";
 import { api } from "@/lib/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useAccountStore } from "@/lib/store";
+import { useEffect } from "react";
 
 const Home: NextPage = () => {
+  const accounts = api.account.list.useQuery();
+  const changeAccount = useAccountStore((state) => state.changeAccount);
   const current_account_id = useAccountStore(
     (state) => state.current_account_id
   );
   const { isLoading, data: account } = api.account.getAccountDetail.useQuery({
     account_id: current_account_id!,
   });
+
+  useEffect(() => {
+    // Check if the 'account' is null and if there is data in 'accounts.data'
+    if (
+      current_account_id === null &&
+      accounts.data &&
+      accounts.data.length > 0
+    ) {
+      // Set the first account from the 'accounts.data' list
+      // TODO: Maybe have option to set as default account
+      changeAccount(accounts.data[0].account_id);
+    }
+  }, [current_account_id, accounts, changeAccount]);
 
   return (
     <>
