@@ -1,0 +1,1 @@
+ALTER TABLE "account" ALTER COLUMN "balance" TYPE NUMERIC USING "balance"::numeric;

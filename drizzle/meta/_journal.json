@@ -8,6 +8,20 @@
       "when": 1697727583875,
       "tag": "0000_shiny_hercules",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1697852909591,
+      "tag": "0001_lumpy_frog_thor",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1697853347251,
+      "tag": "0002_numerous_onslaught",
+      "breakpoints": true
     }
   ]
 }
