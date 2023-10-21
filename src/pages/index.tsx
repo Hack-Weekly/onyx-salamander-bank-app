@@ -9,9 +9,14 @@ const Home: NextPage = () => {
   const current_account_id = useAccountStore(
     (state) => state.current_account_id
   );
-  const { isLoading, data: account } = api.account.getAccountDetail.useQuery({
-    account_id: current_account_id!,
-  });
+  const { isLoading, data: account } = api.account.getAccountDetail.useQuery(
+    {
+      account_id: current_account_id!,
+    },
+    {
+      enabled: current_account_id !== null,
+    }
+  );
 
   return (
     <>
