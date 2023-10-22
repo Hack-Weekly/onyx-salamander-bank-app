@@ -1,16 +1,34 @@
+import "../styles/globals.css";
 import { type AppType } from "next/app";
-import { ClerkProvider } from "@clerk/nextjs";
+import {
+  ClerkProvider,
+  RedirectToSignIn,
+  SignIn,
+  SignedIn,
+  SignedOut,
+} from "@clerk/nextjs";
 import { api } from "@/lib/api";
 
 import "../styles/globals.css";
 import Layout from "@/components/layout";
+import { Inter } from "next/font/google";
+// If loading a variable font, you don't need to specify the font weight
+const inter = Inter({ subsets: ["latin"] });
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <ClerkProvider {...pageProps}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <main className={inter.className}>
+        <SignedIn>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </SignedIn>
+        <SignedOut>
+          <RedirectToSignIn redirectUrl="/" />
+          <Component {...pageProps} />
+        </SignedOut>
+      </main>
     </ClerkProvider>
   );
 };
