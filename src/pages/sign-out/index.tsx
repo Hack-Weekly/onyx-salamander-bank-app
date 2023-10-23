@@ -9,8 +9,7 @@ export default function SignOut() {
   const { clearStore } = useAccountStore();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const accountKey = getQueryKey(api.account.list);
-  queryClient.removeQueries({ queryKey: accountKey });
+  queryClient.resetQueries();
 
   useEffect(() => {
     clearStore();
