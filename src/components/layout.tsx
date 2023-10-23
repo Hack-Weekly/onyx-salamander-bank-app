@@ -3,7 +3,8 @@ import { api } from "@/lib/api";
 import { useAccountStore } from "@/lib/store";
 import { UserButton } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import CreateAccount from "./account/create-account";
+import Spinner from "@/components/ui/spinner";
+import CreateAccount from "@/components/account/create-account";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [hasAccount, setHasAccount] = useState(true);
@@ -40,7 +41,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         current_account_id ? (
           children
         ) : (
-          "Loading"
+          <Spinner 
+            text="Loading accounts..." /> 
         )
       ) : (
         <CreateAccount />
