@@ -1,12 +1,6 @@
 import "../styles/globals.css";
 import { type AppType } from "next/app";
-import {
-  ClerkProvider,
-  RedirectToSignIn,
-  SignIn,
-  SignedIn,
-  SignedOut,
-} from "@clerk/nextjs";
+import { ClerkProvider, SignedIn, SignedOut } from "@clerk/nextjs";
 import { api } from "@/lib/api";
 
 import "../styles/globals.css";
@@ -26,7 +20,6 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           </Layout>
         </SignedIn>
         <SignedOut>
-          <RedirectToSignIn redirectUrl="/" />
           <Component {...pageProps} />
         </SignedOut>
       </main>
