@@ -109,7 +109,7 @@ export const accountRouter = createTRPCRouter({
 
       return result;
     }),
-  create: protectedProcedure.mutation(async ({ ctx }) => {
+  createAccount: protectedProcedure.mutation(async ({ ctx }) => {
     const result = await ctx.db
       .insert(Account)
       .values({
