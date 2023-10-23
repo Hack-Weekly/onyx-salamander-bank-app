@@ -1,15 +1,21 @@
+import { api } from "@/lib/api";
 import { useAccountStore } from "@/lib/store";
-import React, { useEffect } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { getQueryKey } from "@trpc/react-query";
 import { useRouter } from "next/navigation";
+import React, { useEffect } from "react";
 
 export default function SignOut() {
-  const { clearAccount } = useAccountStore();
+  const { clearStore } = useAccountStore();
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const accountKey = getQueryKey(api.account.list);
+  queryClient.removeQueries({ queryKey: accountKey });
 
   useEffect(() => {
-    clearAccount();
+    clearStore();
     router.replace("/");
-  }, [clearAccount, router]);
+  }, []);
 
-  return <div>Loading</div>;
+  return <></>;
 }
