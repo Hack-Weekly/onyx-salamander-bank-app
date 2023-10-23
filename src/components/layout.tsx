@@ -3,7 +3,7 @@ import { api } from "@/lib/api";
 import { useAccountStore } from "@/lib/store";
 import { UserButton } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
-import CreateAccount from "./create-account/create-account";
+import CreateAccount from "./account/create-account";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [hasAccount, setHasAccount] = useState(true);
