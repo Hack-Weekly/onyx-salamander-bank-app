@@ -29,7 +29,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     }
   }, [current_account_id, accounts, changeAccount]);
 
-  return hasAccount ? (
+  return (
     <>
       <div className="flex h-16 items-center px-4 border-b">
         <MainNav className="mx-6" />
@@ -37,9 +37,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <UserButton afterSignOutUrl="/" />
         </div>
       </div>
-      {current_account_id ? children : "Loading"}
+      { 
+        hasAccount ? 
+          current_account_id ? children : "Loading" :
+          <CreateAccount/>
+      }
     </>
-  ) : (
-    <CreateAccount/>
-  );
+  )
 }
