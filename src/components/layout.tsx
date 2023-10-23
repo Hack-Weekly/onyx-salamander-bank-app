@@ -31,7 +31,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <div className="flex h-16 items-center px-4 border-b">
         <MainNav className="mx-6" />
         <div className="ml-auto flex items-center space-x-4">
-          <UserButton afterSignOutUrl="/" />
+          <UserButton afterSignOutUrl="/sign-out" />
         </div>
       </div>
       {hasAccount ? (
