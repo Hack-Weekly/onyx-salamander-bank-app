@@ -7,27 +7,24 @@ import CreateAccount from "./create-account/create-account";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const [hasAccount, setHasAccount] = useState(true);
-  const accounts = api.account.list.useQuery();
+  const { data: accounts, isLoading } = api.account.list.useQuery();
 
-  const current_account_id = useAccountStore(
-    (state) => state.current_account_id
-  );
-  const changeAccount = useAccountStore((state) => state.changeAccount);
+  const { changeAccount, current_account_id } = useAccountStore();
 
   useEffect(() => {
     // Check if the 'account' is null and if there is data in 'accounts.data'
-    if (
-      current_account_id === null &&
-      accounts.data &&
-      accounts.data.length > 0
-    ) {
-      // Set the first account from the 'accounts.data' list
-      // TODO: Maybe have option to set as default account
-      changeAccount(accounts.data[0].account_id);
-    } else {
-      setHasAccount(current_account_id !== null);
+    if (!isLoading) {
+      if (current_account_id === null && accounts && accounts.length > 0) {
+        // Set the first account from the 'accounts.data' list
+        // TODO: Maybe have option to set as default account
+        changeAccount(accounts[0].account_id);
+        setHasAccount(true);
+      } else if (current_account_id !== null && accounts?.length === 0) {
+        changeAccount(null);
+        setHasAccount(false);
+      }
     }
-  }, [current_account_id, accounts, changeAccount]);
+  }, [current_account_id, accounts, changeAccount, isLoading]);
 
   return (
     <>
@@ -37,11 +34,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <UserButton afterSignOutUrl="/" />
         </div>
       </div>
-      { 
-        hasAccount ? 
-          current_account_id ? children : "Loading" :
-          <CreateAccount/>
-      }
+      {hasAccount ? (
+        current_account_id ? (
+          children
+        ) : (
+          "Loading"
+        )
+      ) : (
+        <CreateAccount />
+      )}
     </>
-  )
+  );
 }
