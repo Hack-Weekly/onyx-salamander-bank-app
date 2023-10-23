@@ -11,21 +11,18 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useCreateAccount } from "./hooks";
 
-export default function CreateAccountButton() {
-  const accountCreation = api.account.createAccount.useMutation();
-  const utils = api.useUtils();
+type ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;
 
-  const createAccount = async () => {
-    await accountCreation.mutateAsync();
-    utils.account.invalidate();
-  };
+export default function CreateAccountButton(props: ButtonProps) {
+  const createAccount = useCreateAccount();
 
   return (
     <>
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button>Create Account</Button>
+          <Button {...props}>Create Account</Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -36,7 +33,7 @@ export default function CreateAccountButton() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={createAccount}>
+            <AlertDialogAction onClick={() => createAccount()}>
               Confirm
             </AlertDialogAction>
           </AlertDialogFooter>
