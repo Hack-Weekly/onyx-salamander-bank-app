@@ -5,18 +5,17 @@ import { UserButton } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
 import Spinner from "@/components/ui/spinner";
 import CreateAccount from "@/components/account/create-account";
+import AccountSwitcher from "./account/account-switcher";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const [hasAccount, setHasAccount] = useState(true);
   const { data: accounts, isLoading } = api.account.list.useQuery();
 
-  const { changeAccount, current_account_id } = useAccountStore();
+  const { changeAccount, current_account_id, hasAccount, setHasAccount } =
+    useAccountStore();
 
   useEffect(() => {
     // Check if the 'account' is null and if there is data in 'accounts.data'
     if (!isLoading) {
-      console.log(current_account_id);
-      console.log(accounts)
       if (current_account_id === null && accounts && accounts.length > 0) {
         // Set the first account from the 'accounts.data' list
         // TODO: Maybe have option to set as default account
@@ -27,11 +26,12 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         setHasAccount(false);
       }
     }
-  }, [current_account_id, accounts, changeAccount, isLoading]);
+  }, [current_account_id, accounts, changeAccount, isLoading, setHasAccount]);
 
   return (
     <>
       <div className="flex h-16 items-center px-4 border-b">
+        <AccountSwitcher />
         <MainNav className="mx-6" />
         <div className="ml-auto flex items-center space-x-4">
           <UserButton afterSignOutUrl="/sign-out" />
@@ -41,8 +41,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         current_account_id ? (
           children
         ) : (
-          <Spinner 
-            text="Loading accounts..." /> 
+          <Spinner text="Loading accounts..." />
         )
       ) : (
         <CreateAccount />
