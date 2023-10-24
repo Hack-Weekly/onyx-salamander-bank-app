@@ -22,6 +22,7 @@ export function MainNav({
     >
       {links.map((link) => (
         <Link
+          key={link.path}
           href={link.path}
           className={clsx(
             "text-sm font-medium transition-colors hover:text-primary",
