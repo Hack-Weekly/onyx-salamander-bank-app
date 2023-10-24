@@ -37,15 +37,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <UserButton afterSignOutUrl="/sign-out" />
         </div>
       </div>
-      {hasAccount ? (
-        current_account_id ? (
-          children
+      <div className="flex-1 space-y-4 p-8 pt-6">
+        {hasAccount ? (
+          current_account_id ? (
+            children
+          ) : (
+            <Spinner text="Loading accounts..." />
+          )
         ) : (
-          <Spinner text="Loading accounts..." />
-        )
-      ) : (
-        <CreateAccount />
-      )}
+          <CreateAccount />
+        )}
+      </div>
     </>
   );
 }
