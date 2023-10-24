@@ -33,7 +33,8 @@ const generateAccountNumber = () => {
 export const accountRouter = createTRPCRouter({
   allAccounts: publicProcedure.query( async ({ ctx }) => {
     const result = await ctx.db
-      .select();
+      .select()
+      .from(Account);
 
     return result;
   }),
@@ -77,7 +78,7 @@ export const accountRouter = createTRPCRouter({
         amount: z.string()
       })
     )
-    .query( async ({ ctx, input }) => {
+    .mutation( async ({ ctx, input }) => {
       const result = await ctx.db.transaction( async (tx) => {
         const [account] = await tx
           .select({

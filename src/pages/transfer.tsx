@@ -1,31 +1,81 @@
-import AccountSelector from "@/components/transfer/account-selector";
+import TransferSelector from "@/components/transfer/transfer-selector";
+import { Button } from "@/components/ui/button";
+import { 
+  Form,
+  FormField,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormItem,
+  FormMessage
+} from "@/components/ui/form";
+import { api } from "@/lib/api";
+import { useAccountStore } from "@/lib/store";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+import { Input } from "@/components/ui/input";
+
+const formSchema = z.object({
+  transfer_to: z.string(),
+  amount: z.string()
+})
+.required();
 
 export default function Transfer() {
+  const { current_account_id } = useAccountStore();
+  const [ toAccount, setToAccount ] = useState(undefined);
+  const mutation = api.account.transferMoney.useMutation();
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema)
+  });
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    await mutation.mutateAsync({
+      transfer_to: values.transfer_to,
+      amount: values.amount
+    });
+  }
+
   return (
-    <div className="flex flex-col">
-      <div>
-        <div>
-            <AccountSelector />
+    <Form {...form}>
+      <form onSubmit={ form.handleSubmit(onSubmit)}>
+        <div className="flex flex-col justify-center items-center h-96 space-y-2">
+          
+          <FormField
+            control={form.control}
+            name="transfer_to"
+            render={({ field: { onChange, value} }) => (
+              <FormItem>
+                <FormControl>
+                  <TransferSelector 
+                    type="To"
+                    account_id={ value }
+                    onChange={ onChange } />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="amount"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input placeholder="Amount" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <Button type="submit">Transfer now</Button>
         </div>
-        <div>
-            <svg
-            width="15"
-            height="15"
-            viewBox="0 0 15 15"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            >
-            <path
-                d="M14 7.5C14 7.66148 13.922 7.81301 13.7906 7.90687L6.79062 12.9069C6.63821 13.0157 6.43774 13.0303 6.27121 12.9446C6.10467 12.8589 6 12.6873 6 12.5L6 10L3.5 10C3.22386 10 3 9.77614 3 9.5L3 5.5C3 5.22386 3.22386 5 3.5 5L6 5L6 2.5C6 2.31271 6.10467 2.14112 6.27121 2.05542C6.43774 1.96972 6.63821 1.98427 6.79062 2.09313L13.7906 7.09314C13.922 7.18699 14 7.33853 14 7.5ZM7 3.4716L7 5.5C7 5.77614 6.77614 6 6.5 6L4 6L4 9L6.5 9C6.77614 9 7 9.22386 7 9.5L7 11.5284L12.6398 7.5L7 3.4716Z"
-                fill="currentColor"
-                fill-rule="evenodd"
-                clip-rule="evenodd"
-            ></path>
-            </svg>
-        </div>
-        <div></div>
-      </div>
-      <div></div>
-    </div>
+      </form>
+    </Form>
   );
 }
