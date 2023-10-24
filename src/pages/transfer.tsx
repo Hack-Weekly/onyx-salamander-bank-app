@@ -24,8 +24,6 @@ const formSchema = z.object({
 .required();
 
 export default function Transfer() {
-  const { current_account_id } = useAccountStore();
-  const [ toAccount, setToAccount ] = useState(undefined);
   const mutation = api.account.transferMoney.useMutation();
 
   const form = useForm<z.infer<typeof formSchema>>({
