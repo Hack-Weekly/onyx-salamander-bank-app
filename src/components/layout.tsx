@@ -17,7 +17,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Check if the 'account' is null and if there is data in 'accounts.data'
     if (!isLoading) {
-      if (accounts && accounts.length > 0) {
+      if (current_account_id === null && accounts && accounts.length > 0) {
         // Set the first account from the 'accounts.data' list
         // TODO: Maybe have option to set as default account
         changeAccount(accounts[0].account_id);
@@ -43,15 +43,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <UserButton afterSignOutUrl="/sign-out" />
         </div>
       </div>
-      {hasAccount ? (
-        current_account_id ? (
-          children
+      <div className="flex-1 space-y-4 p-8 pt-6">
+        {hasAccount ? (
+          current_account_id ? (
+            children
+          ) : (
+            <Spinner text="Loading accounts..." />
+          )
         ) : (
-          <Spinner text="Loading accounts..." />
-        )
-      ) : (
-        <CreateAccount />
-      )}
+          <CreateAccount />
+        )}
+      </div>
     </>
   );
 }
