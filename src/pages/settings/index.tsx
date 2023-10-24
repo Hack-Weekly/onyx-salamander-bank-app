@@ -23,8 +23,10 @@ import { useAccountStore } from "@/lib/store";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Settings() {
-  type SettingsFormValues =
-    inferRouterInputs<AppRouter>["account"]["setPreferences"];
+  type SettingsFormValues = Omit<
+    inferRouterInputs<AppRouter>["account"]["setPreferences"],
+    "account_id"
+  >;
 
   const { current_account_id } = useAccountStore();
 
@@ -69,7 +71,9 @@ export default function Settings() {
   };
 
   useEffect(() => {
-    form.reset({ transfer_limit: preferences?.transfer_limit });
+    if (preferences) {
+      form.reset({ transfer_limit: preferences.transfer_limit });
+    }
   }, [preferences]);
 
   return (
