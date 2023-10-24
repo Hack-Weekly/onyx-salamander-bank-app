@@ -11,8 +11,7 @@ import Head from "next/head";
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { data: accounts, isLoading } = api.account.list.useQuery();
 
-  const { changeAccount, current_account_id, hasAccount, setHasAccount } =
-    useAccountStore();
+  const { changeAccount, current_account_id } = useAccountStore();
 
   useEffect(() => {
     // Check if the 'account' is null and if there is data in 'accounts.data'
@@ -21,13 +20,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         // Set the first account from the 'accounts.data' list
         // TODO: Maybe have option to set as default account
         changeAccount(accounts[0].account_id);
-        setHasAccount(true);
       } else if (current_account_id === null && accounts?.length === 0) {
         changeAccount(null);
-        setHasAccount(false);
       }
     }
-  }, [current_account_id, accounts, changeAccount, isLoading, setHasAccount]);
+  }, [current_account_id, accounts, changeAccount, isLoading]);
 
   return (
     <>
@@ -44,14 +41,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </div>
       <div className="flex-1 space-y-4 p-8 pt-6">
-        {hasAccount ? (
-          current_account_id ? (
+        {accounts ? (
+          accounts.length > 0 ? (
             children
           ) : (
-            <Spinner text="Loading accounts..." />
+            <CreateAccount />
           )
         ) : (
-          <CreateAccount />
+          <Spinner text="Loading accounts..." />
         )}
       </div>
     </>

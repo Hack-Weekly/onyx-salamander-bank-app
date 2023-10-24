@@ -32,7 +32,7 @@ interface AccountSwitcherProps extends PopoverTriggerProps {}
 
 export default function AccountSwitcher({ className }: AccountSwitcherProps) {
   const [open, setOpen] = React.useState(false);
-  const { current_account_id, hasAccount, changeAccount } = useAccountStore();
+  const { current_account_id, changeAccount } = useAccountStore();
   const { data: accounts } = api.account.list.useQuery();
 
   return (
@@ -44,7 +44,7 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
           aria-expanded={open}
           aria-label="Select a team"
           className={cn("w-[200px] justify-between", className)}
-          disabled={!hasAccount}
+          disabled={!current_account_id}
         >
           <Avatar className="mr-2 h-5 w-5">
             <AvatarImage
@@ -90,7 +90,7 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
                       "ml-auto h-4 w-4",
                       current_account_id === account.account_id
                         ? "opacity-100"
-                        : "opacity-0"
+                        : "opacity-0",
                     )}
                   />
                 </CommandItem>
