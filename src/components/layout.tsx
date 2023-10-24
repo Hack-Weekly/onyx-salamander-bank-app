@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Spinner from "@/components/ui/spinner";
 import CreateAccount from "@/components/account/create-account";
 import AccountSwitcher from "./account/account-switcher";
+import Head from "next/head";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { data: accounts, isLoading } = api.account.list.useQuery();
@@ -30,6 +31,11 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      <Head>
+        <meta name="description" content="Hack Weekly" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
       <div className="flex h-16 items-center px-4 border-b">
         <AccountSwitcher />
         <MainNav className="mx-6" />
