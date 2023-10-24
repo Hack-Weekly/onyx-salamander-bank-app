@@ -4,8 +4,6 @@ import { persist, createJSONStorage } from "zustand/middleware";
 interface AccountState {
   current_account_id: string | null;
   changeAccount: (to: string | null) => void;
-  hasAccount: boolean;
-  setHasAccount: (to: boolean) => void;
   clearStore: () => void;
 }
 
@@ -14,11 +12,9 @@ export const useAccountStore = create<AccountState>()(
     (set, get) => ({
       current_account_id: null,
       changeAccount: (to) => set(() => ({ current_account_id: to })),
-      hasAccount: true,
-      setHasAccount: (to) => set(() => ({ hasAccount: to })),
       clearStore: () => {
         set(() => {
-          return { current_account_id: null, hasAccount: false };
+          return { current_account_id: null };
         });
       },
     }),
