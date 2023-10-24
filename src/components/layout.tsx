@@ -20,7 +20,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         // Set the first account from the 'accounts.data' list
         // TODO: Maybe have option to set as default account
         changeAccount(accounts[0].account_id);
-      } else if (current_account_id === null && accounts?.length === 0) {
+      } else if (accounts?.length === 0) {
         changeAccount(null);
       }
     }
