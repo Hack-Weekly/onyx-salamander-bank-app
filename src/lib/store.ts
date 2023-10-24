@@ -14,7 +14,7 @@ export const useAccountStore = create<AccountState>()(
     (set, get) => ({
       current_account_id: null,
       changeAccount: (to) => set(() => ({ current_account_id: to })),
-      hasAccount: false,
+      hasAccount: true,
       setHasAccount: (to) => set(() => ({ hasAccount: to })),
       clearStore: () => {
         set(() => {
@@ -25,6 +25,6 @@ export const useAccountStore = create<AccountState>()(
     {
       name: "account-storage",
       storage: createJSONStorage(() => sessionStorage),
-    }
-  )
+    },
+  ),
 );
