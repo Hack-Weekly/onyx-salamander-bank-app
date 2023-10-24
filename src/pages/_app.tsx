@@ -2,8 +2,7 @@ import "../styles/globals.css";
 import { type AppType } from "next/app";
 import { ClerkProvider, SignedIn, SignedOut } from "@clerk/nextjs";
 import { api } from "@/lib/api";
-
-import "../styles/globals.css";
+import { Toaster } from "sonner";
 import Layout from "@/components/layout";
 import { Inter } from "next/font/google";
 
@@ -22,6 +21,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         <SignedOut>
           <Component {...pageProps} />
         </SignedOut>
+        <Toaster />
       </main>
     </ClerkProvider>
   );
