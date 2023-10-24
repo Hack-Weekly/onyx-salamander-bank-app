@@ -17,7 +17,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Check if the 'account' is null and if there is data in 'accounts.data'
     if (!isLoading) {
-      if (current_account_id === null && accounts && accounts.length > 0) {
+      if (accounts && accounts.length > 0) {
         // Set the first account from the 'accounts.data' list
         // TODO: Maybe have option to set as default account
         changeAccount(accounts[0].account_id);
