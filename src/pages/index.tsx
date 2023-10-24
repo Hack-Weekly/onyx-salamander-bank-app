@@ -4,7 +4,7 @@ import { api } from "@/lib/api";
 import { useAccountStore } from "@/lib/store";
 import AccountCard from "@/components/account/account-card";
 import SkeletonAccountCard from "@/components/account/skeleton-account-card";
-import { useEffect } from "react";
+import Head from "next/head";
 
 const Home: NextPage = () => {
   const { current_account_id } = useAccountStore();
@@ -18,16 +18,10 @@ const Home: NextPage = () => {
     },
   );
 
-  useEffect( () => {
-    document.title = "Dashboard | Onyx Salamaner Bank"
-  }, []);
-
   return (
     <>
       <Head>
         <title>Dashboard | Onyx Salamaner Bank</title>
-        <meta name="description" content="Hack Weekly" />
-        <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <div className="flex-1 space-y-4 p-8 pt-6">
