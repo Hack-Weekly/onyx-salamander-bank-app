@@ -15,7 +15,6 @@ import { api } from "@/lib/api";
 import {
   CaretSortIcon,
 } from "@radix-ui/react-icons";
-import { ControllerRenderProps } from "react-hook-form";
 
 export default function TransferSelector({
     type,
@@ -41,7 +40,7 @@ export default function TransferSelector({
                 >
                 <span className="inline-block overflow-ellipsis w-full overflow-hidden">
                     {
-                        account_id == undefined ?
+                        account_id == "" ?
                             `${type} account` :
                             account_id
                     }
