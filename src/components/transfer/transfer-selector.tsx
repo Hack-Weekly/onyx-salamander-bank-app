@@ -15,6 +15,7 @@ import { api } from "@/lib/api";
 import {
   CaretSortIcon,
 } from "@radix-ui/react-icons";
+import { useAccountStore } from "@/lib/store";
 
 export default function TransferSelector({
     type,
@@ -25,6 +26,7 @@ export default function TransferSelector({
     account_id: string,
     onChange: (account_id: string) => void
 }) {
+    const { current_account_id } = useAccountStore();
     const [open, setOpen] = React.useState(false);
     const { data: accounts } = api.account.allAccounts.useQuery();
     
@@ -55,16 +57,17 @@ export default function TransferSelector({
                         <CommandEmpty>No account found.</CommandEmpty>
                         <CommandGroup heading="Account">
                         {accounts?.map((account) => (
-                            <CommandItem
-                            key={account.account_id}
-                            onSelect={ id => {
-                                setOpen(false);
-                                onChange(id);
-                            }}
-                            className="text-sm"
-                            >
-                            {account.account_id}
-                            </CommandItem>
+                            account.account_id == current_account_id ? null :
+                                <CommandItem
+                                key={account.account_id}
+                                onSelect={ id => {
+                                    setOpen(false);
+                                    onChange(id);
+                                }}
+                                className="text-sm"
+                                >
+                                {account.account_id}
+                                </CommandItem>
                         ))}
                         </CommandGroup>
                     </CommandList>
