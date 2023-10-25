@@ -1,5 +1,6 @@
 import { createTRPCRouter } from "./trpc";
 import { accountRouter } from "./routers/account";
+import { transactionRouter } from "./routers/transaction";
 
 /**
  * This is the primary router for your server.
@@ -8,6 +9,7 @@ import { accountRouter } from "./routers/account";
  */
 export const appRouter = createTRPCRouter({
   account: accountRouter,
+  transaction: transactionRouter,
 });
 
 // export type definition of API
