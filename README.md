@@ -13,7 +13,7 @@
 <br />
 <div align="center">
 
-[![Product Name Screen Shot][product-screenshot]]
+![Product Name Screen Shot][product-screenshot]
 
   <h3 align="center">Onyx Salamander Bank App</h3>
 
