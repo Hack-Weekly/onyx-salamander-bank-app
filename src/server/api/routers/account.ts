@@ -6,14 +6,14 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 const insertAccountPreferenceSchema = createInsertSchema(Account, {}).pick({
+  account_id: true,
   transfer_limit: true,
 });
 
 const selectAccountPreferenceSchema = createSelectSchema(Account)
   .pick({
     transfer_limit: true,
-  })
-  .array();
+  });
 
 const generateAccountNumber = () => {
   const available = "1234567890";
@@ -132,16 +132,21 @@ export const accountRouter = createTRPCRouter({
     return result[0];
   }),
   getPreferences: protectedProcedure
+    .input(
+      z.object({
+        account_id: z.string()
+      })
+    )
     .output(selectAccountPreferenceSchema)
-    .query(async ({ ctx }) => {
+    .query(async ({ ctx, input }) => {
       const result = await ctx.db
         .select({
           transfer_limit: Account.transfer_limit,
         })
         .from(Account)
-        .where(eq(Account.account_id, ctx.auth.userId));
+        .where(eq(Account.account_id, input.account_id));
 
-      return result;
+      return result[0];
     }),
   setPreferences: protectedProcedure
     .input(insertAccountPreferenceSchema)
@@ -149,7 +154,7 @@ export const accountRouter = createTRPCRouter({
       const result = await ctx.db
         .update(Account)
         .set(input)
-        .where(eq(Account.account_id, ctx.auth.userId))
+        .where(eq(Account.account_id, input.account_id))
         .returning();
 
       return result[0];
