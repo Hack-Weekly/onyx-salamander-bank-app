@@ -34,7 +34,10 @@ const generateAccountNumber = () => {
 export const accountRouter = createTRPCRouter({
   allAccounts: publicProcedure.query( async ({ ctx }) => {
     const result = await ctx.db
-      .select()
+      .select({
+        account_id: Account.account_id,
+        user_id: Account.user_id
+      })
       .from(Account);
 
     return result;
@@ -87,7 +90,11 @@ export const accountRouter = createTRPCRouter({
             balance: Account.balance,
           })
           .from(Account)
-          .where(eq(Account.account_id, input.transfer_from));
+          .where(
+            and(
+              eq(Account.account_id, input.transfer_from),
+              eq(Account.user_id, ctx.auth.userId))
+          );
   
         if (Number(account.balance) < Number(input.amount)) return await tx.rollback();
   
@@ -96,7 +103,11 @@ export const accountRouter = createTRPCRouter({
           .set({
             balance: sql`${Account.balance} - ${input.amount}`,
           })
-          .where(eq(Account.account_id, input.transfer_from));
+          .where(
+            and(
+              eq(Account.account_id, input.transfer_from),
+              eq(Account.user_id, ctx.auth.userId))
+          )
         await tx
           .update(Account)
           .set({
