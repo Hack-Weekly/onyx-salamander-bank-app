@@ -22,7 +22,7 @@
     <a href="https://github.com/Hack-Weekly/onyx-salamander-bank-app/"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="">View Demo</a>
+    <a href="https://onyx-salamander-bank-app-h7p8.vercel.app/">View Demo</a>
     ·
     <a href="https://github.com/Hack-Weekly/onyx-salamander-bank-app/issues">Report Bug</a>
     ·
