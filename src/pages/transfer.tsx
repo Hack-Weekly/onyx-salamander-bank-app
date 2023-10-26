@@ -24,6 +24,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import clsx from "clsx";
+import Spinner from "@/components/ui/spinner";
 
 const formSchema = z
   .object({
@@ -100,7 +101,8 @@ export default function Transfer() {
   return (
     <>
       {!transactions || isLoading ? (
-        "Loading"
+        <Spinner 
+          text="Loading transactions..."/>
       ) : transactions.length === 0 ? (
         "No transactions"
       ) : (
