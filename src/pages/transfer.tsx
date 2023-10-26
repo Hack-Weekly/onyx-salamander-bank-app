@@ -100,6 +100,50 @@ export default function Transfer() {
 
   return (
     <>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="flex flex-col justify-center items-center space-y-2">
+            <FormField
+              control={form.control}
+              name="transfer_to"
+              render={({ field: { onChange, value } }) => (
+                <FormItem>
+                  <FormControl>
+                    <TransferSelector
+                      type="To"
+                      account_id={value}
+                      onChange={onChange}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="amount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Amount" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? (
+                <Loader2 className="h-6 w-6 animate-spin" />
+              ) : (
+                "Transfer now"
+              )}
+            </Button>
+          </div>
+        </form>
+      </Form>
+
       {!transactions || isLoading ? (
         <Spinner 
           text="Loading transactions..."/>
@@ -171,49 +215,6 @@ export default function Transfer() {
           </TableBody>
         </Table>
       )}
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="flex flex-col justify-center items-center h-96 space-y-2">
-            <FormField
-              control={form.control}
-              name="transfer_to"
-              render={({ field: { onChange, value } }) => (
-                <FormItem>
-                  <FormControl>
-                    <TransferSelector
-                      type="To"
-                      account_id={value}
-                      onChange={onChange}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="amount"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder="Amount" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? (
-                <Loader2 className="h-6 w-6 animate-spin" />
-              ) : (
-                "Transfer now"
-              )}
-            </Button>
-          </div>
-        </form>
-      </Form>
     </>
   );
 }
