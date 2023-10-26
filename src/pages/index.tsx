@@ -5,6 +5,8 @@ import { useAccountStore } from "@/lib/store";
 import AccountCard from "@/components/account/account-card";
 import SkeletonAccountCard from "@/components/account/skeleton-account-card";
 import Head from "next/head";
+import Spinner from "@/components/ui/spinner";
+import TransactionTable from "@/components/transaction/transaction-table";
 
 const Home: NextPage = () => {
   const { current_account_id } = useAccountStore();
@@ -17,6 +19,10 @@ const Home: NextPage = () => {
       enabled: current_account_id !== null,
     },
   );
+  const { data: transactions, isLoading: transactionIsLoading } =
+    api.transaction.getTransactionsHistory.useQuery({
+      account_id: current_account_id!,
+    });
 
   return (
     <>
@@ -33,6 +39,16 @@ const Home: NextPage = () => {
             <AccountCard balance={Number(account.balance).toFixed(2)} />
           )}
         </div>
+        <h3 className="text-2xl font-bold tracking-tight">Transactions</h3>
+        {!transactions || transactionIsLoading ? (
+          <Spinner 
+            text="Loading transactions..."/>
+        ) : transactions.length === 0 ? (
+          "No transactions"
+        ) : (
+          <TransactionTable 
+            data={ transactions }/>
+        )}
       </div>
     </>
   );
