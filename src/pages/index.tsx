@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator";
 const Home: NextPage = () => {
   const { current_account_id } = useAccountStore();
 
-  const { isLoading, data: account } = api.account.getAccountDetail.useQuery(
+  const { data: account } = api.account.getAccountDetail.useQuery(
     {
       account_id: current_account_id!,
     },
@@ -46,13 +46,11 @@ const Home: NextPage = () => {
         <h3 className="text-2xl font-bold tracking-tight">Transactions</h3>
         <Separator />
         {!transactions || transactionIsLoading ? (
-          <Spinner 
-            text="Loading transactions..."/>
+          <Spinner text="Loading transactions..." />
         ) : transactions.length === 0 ? (
           "No transactions"
         ) : (
-          <TransactionTable 
-            data={ transactions }/>
+          <TransactionTable data={transactions} />
         )}
       </div>
     </>

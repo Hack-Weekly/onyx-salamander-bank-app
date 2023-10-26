@@ -2,7 +2,7 @@ import { MainNav } from "@/components/main-nav";
 import { api } from "@/lib/api";
 import { useAccountStore } from "@/lib/store";
 import { UserButton } from "@clerk/nextjs";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Spinner from "@/components/ui/spinner";
 import CreateAccount from "@/components/account/create-account";
 import AccountSwitcher from "./account/account-switcher";
@@ -33,7 +33,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="flex h-16 items-center px-4 border-b">
+      <div className="flex h-16 items-center border-b px-4">
         <AccountSwitcher />
         <MainNav className="mx-6" />
         <div className="ml-auto flex items-center space-x-4">

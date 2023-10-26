@@ -1,7 +1,6 @@
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { Account, Transaction, statusEnum } from "@/server/db/schema";
 import { and, eq, sql } from "drizzle-orm";
-import { numeric } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -10,10 +9,9 @@ const insertAccountPreferenceSchema = createInsertSchema(Account, {}).pick({
   transfer_limit: true,
 });
 
-const selectAccountPreferenceSchema = createSelectSchema(Account)
-  .pick({
-    transfer_limit: true,
-  });
+const selectAccountPreferenceSchema = createSelectSchema(Account).pick({
+  transfer_limit: true,
+});
 
 const generateAccountNumber = () => {
   const available = "1234567890";
@@ -32,11 +30,11 @@ const generateAccountNumber = () => {
 };
 
 export const accountRouter = createTRPCRouter({
-  allAccounts: publicProcedure.query( async ({ ctx }) => {
+  allAccounts: publicProcedure.query(async ({ ctx }) => {
     const result = await ctx.db
       .select({
         account_id: Account.account_id,
-        user_id: Account.user_id
+        user_id: Account.user_id,
       })
       .from(Account);
 
@@ -56,7 +54,7 @@ export const accountRouter = createTRPCRouter({
     .input(
       z.object({
         account_id: z.string(),
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const result = await ctx.db
@@ -68,8 +66,8 @@ export const accountRouter = createTRPCRouter({
         .where(
           and(
             eq(Account.user_id, ctx.auth.userId),
-            eq(Account.account_id, input.account_id)
-          )
+            eq(Account.account_id, input.account_id),
+          ),
         )
         .limit(1);
 
@@ -80,11 +78,11 @@ export const accountRouter = createTRPCRouter({
       z.object({
         transfer_from: z.string(),
         transfer_to: z.string(),
-        amount: z.string()
-      })
+        amount: z.string(),
+      }),
     )
-    .mutation( async ({ ctx, input }) => {
-      const result = await ctx.db.transaction( async (tx) => {
+    .mutation(async ({ ctx, input }) => {
+      const result = await ctx.db.transaction(async (tx) => {
         const [account] = await tx
           .select({
             balance: Account.balance,
@@ -93,11 +91,13 @@ export const accountRouter = createTRPCRouter({
           .where(
             and(
               eq(Account.account_id, input.transfer_from),
-              eq(Account.user_id, ctx.auth.userId))
+              eq(Account.user_id, ctx.auth.userId),
+            ),
           );
-  
-        if (Number(account.balance) < Number(input.amount)) return await tx.rollback();
-  
+
+        if (Number(account.balance) < Number(input.amount))
+          return await tx.rollback();
+
         await tx
           .update(Account)
           .set({
@@ -106,8 +106,9 @@ export const accountRouter = createTRPCRouter({
           .where(
             and(
               eq(Account.account_id, input.transfer_from),
-              eq(Account.user_id, ctx.auth.userId))
-          )
+              eq(Account.user_id, ctx.auth.userId),
+            ),
+          );
         await tx
           .update(Account)
           .set({
@@ -123,7 +124,7 @@ export const accountRouter = createTRPCRouter({
             status: statusEnum.enumValues[1],
           })
           .returning();
-  
+
         return transaction;
       });
 
@@ -145,8 +146,8 @@ export const accountRouter = createTRPCRouter({
   getPreferences: protectedProcedure
     .input(
       z.object({
-        account_id: z.string()
-      })
+        account_id: z.string(),
+      }),
     )
     .output(selectAccountPreferenceSchema)
     .query(async ({ ctx, input }) => {
@@ -155,7 +156,12 @@ export const accountRouter = createTRPCRouter({
           transfer_limit: Account.transfer_limit,
         })
         .from(Account)
-        .where(eq(Account.account_id, input.account_id));
+        .where(
+          and(
+            eq(Account.account_id, input.account_id),
+            eq(Account.account_id, input.account_id),
+          ),
+        );
 
       return result[0];
     }),

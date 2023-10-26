@@ -9,7 +9,7 @@ interface AccountState {
 
 export const useAccountStore = create<AccountState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       current_account_id: null,
       changeAccount: (to) => set(() => ({ current_account_id: to })),
       clearStore: () => {

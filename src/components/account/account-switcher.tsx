@@ -21,7 +21,6 @@ import {
   CheckIcon,
   PlusCircledIcon,
 } from "@radix-ui/react-icons";
-import { useCreateAccount } from "./hooks";
 import CreateAccountButton from "./create-account-button";
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
@@ -53,10 +52,10 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
               className={clsx(current_account_id === null && "grayscale")}
             />
             <AvatarFallback>
-              <span className="grayscale w-full h-full"></span>
+              <span className="h-full w-full grayscale"></span>
             </AvatarFallback>
           </Avatar>
-          <span className="inline-block overflow-ellipsis w-full overflow-hidden">
+          <span className="inline-block w-full overflow-hidden overflow-ellipsis">
             {current_account_id}
           </span>
           <CaretSortIcon className="ml-auto h-4 w-4 shrink-0 opacity-50" />
@@ -104,7 +103,7 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
                 <PlusCircledIcon className="mr-2 h-5 w-5" />
                 <CreateAccountButton
                   variant={"ghost"}
-                  className="h-0 px-0 cursor-default text-sm font-normal"
+                  className="h-0 cursor-default px-0 text-sm font-normal"
                 />
               </CommandItem>
             </CommandGroup>

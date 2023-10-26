@@ -1,4 +1,3 @@
-import { api } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
