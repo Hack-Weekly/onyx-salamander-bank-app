@@ -31,9 +31,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         name: "current_account_id",
         value: current_account_id,
       }),
-    })
-      .then((res) => res.json())
-      .then((res) => console.log(res));
+    });
   }, [current_account_id, accounts, changeAccount, isLoading]);
 
   return (
