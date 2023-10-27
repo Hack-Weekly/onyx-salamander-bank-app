@@ -24,6 +24,16 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         changeAccount(null);
       }
     }
+
+    fetch("/api/cookie", {
+      method: "POST",
+      body: JSON.stringify({
+        name: "current_account_id",
+        value: current_account_id,
+      }),
+    })
+      .then((res) => res.json())
+      .then((res) => console.log(res));
   }, [current_account_id, accounts, changeAccount, isLoading]);
 
   return (
