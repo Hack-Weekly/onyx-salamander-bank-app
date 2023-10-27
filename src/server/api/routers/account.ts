@@ -5,7 +5,6 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 const insertAccountPreferenceSchema = createInsertSchema(Account, {}).pick({
-  account_id: true,
   transfer_limit: true,
 });
 
@@ -50,33 +49,26 @@ export const accountRouter = createTRPCRouter({
 
     return result;
   }),
-  getAccountDetail: protectedProcedure
-    .input(
-      z.object({
-        account_id: z.string(),
-      }),
-    )
-    .query(async ({ ctx, input }) => {
-      const result = await ctx.db
-        .select({
-          balance: Account.balance,
-          transfer_limit: Account.transfer_limit,
-        })
-        .from(Account)
-        .where(
-          and(
-            eq(Account.user_id, ctx.auth.userId),
-            eq(Account.account_id, input.account_id),
-          ),
-        )
-        .limit(1);
+  getAccountDetail: protectedProcedure.query(async ({ ctx }) => {
+    const result = await ctx.db
+      .select({
+        balance: Account.balance,
+        transfer_limit: Account.transfer_limit,
+      })
+      .from(Account)
+      .where(
+        and(
+          eq(Account.user_id, ctx.auth.userId),
+          eq(Account.account_id, ctx.account!),
+        ),
+      )
+      .limit(1);
 
-      return result[0];
-    }),
+    return result[0];
+  }),
   transferMoney: protectedProcedure
     .input(
       z.object({
-        transfer_from: z.string(),
         transfer_to: z.string(),
         amount: z.string(),
       }),
@@ -90,7 +82,7 @@ export const accountRouter = createTRPCRouter({
           .from(Account)
           .where(
             and(
-              eq(Account.account_id, input.transfer_from),
+              eq(Account.account_id, ctx.account!),
               eq(Account.user_id, ctx.auth.userId),
             ),
           );
@@ -105,7 +97,7 @@ export const accountRouter = createTRPCRouter({
           })
           .where(
             and(
-              eq(Account.account_id, input.transfer_from),
+              eq(Account.account_id, ctx.account!),
               eq(Account.user_id, ctx.auth.userId),
             ),
           );
@@ -118,7 +110,7 @@ export const accountRouter = createTRPCRouter({
         const transaction = await tx
           .insert(Transaction)
           .values({
-            from_account_id: input.transfer_from,
+            from_account_id: ctx.account!,
             to_account_id: input.transfer_to,
             amount: input.amount,
             status: statusEnum.enumValues[1],
@@ -144,24 +136,14 @@ export const accountRouter = createTRPCRouter({
     return result[0];
   }),
   getPreferences: protectedProcedure
-    .input(
-      z.object({
-        account_id: z.string(),
-      }),
-    )
     .output(selectAccountPreferenceSchema)
-    .query(async ({ ctx, input }) => {
+    .query(async ({ ctx }) => {
       const result = await ctx.db
         .select({
           transfer_limit: Account.transfer_limit,
         })
         .from(Account)
-        .where(
-          and(
-            eq(Account.account_id, input.account_id),
-            eq(Account.account_id, input.account_id),
-          ),
-        );
+        .where(eq(Account.account_id, ctx.account!));
 
       return result[0];
     }),
@@ -171,7 +153,7 @@ export const accountRouter = createTRPCRouter({
       const result = await ctx.db
         .update(Account)
         .set(input)
-        .where(eq(Account.account_id, input.account_id))
+        .where(eq(Account.account_id, ctx.account!))
         .returning();
 
       return result[0];
