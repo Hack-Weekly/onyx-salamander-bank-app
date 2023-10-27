@@ -27,6 +27,7 @@ import { db } from "../db";
 
 interface AuthContext {
   auth: SignedInAuthObject | SignedOutAuthObject;
+  account?: string;
 }
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use
@@ -37,11 +38,20 @@ interface AuthContext {
  * - trpc's `createSSGHelpers` where we don't have req/res
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
-const createInnerTRPCContext = ({ auth }: AuthContext) => {
+const createInnerTRPCContext = ({ auth, account }: AuthContext) => {
   return {
     auth,
     db,
+    account,
   };
+};
+
+const getAccountFromCookie = (req: NextApiRequest) => {
+  if (req.headers.cookie == undefined) return undefined;
+
+  const cookies = headerCookieToJSON(req.headers.cookie);
+
+  return cookies.current_account_id;
 };
 
 /**
@@ -50,7 +60,10 @@ const createInnerTRPCContext = ({ auth }: AuthContext) => {
  * @link https://trpc.io/docs/context
  */
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
-  return createInnerTRPCContext({ auth: getAuth(opts.req) });
+  return createInnerTRPCContext({
+    auth: getAuth(opts.req),
+    account: getAccountFromCookie(opts.req),
+  });
 };
 
 /**
@@ -61,6 +74,10 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
  */
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
+import { Account } from "../db/schema";
+import { and, eq } from "drizzle-orm";
+import { NextApiRequest } from "next";
+import { headerCookieToJSON } from "@/lib/utils";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -70,14 +87,38 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 });
 
 // check if the user is signed in, otherwise through a UNAUTHORIZED CODE
-const isAuthed = t.middleware(({ next, ctx }) => {
+const isAuthed = t.middleware(async ({ next, ctx }) => {
   if (!ctx.auth.userId) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+
+  if (ctx.account == undefined) {
+    return next({
+      ctx: {
+        auth: ctx.auth,
+      },
+    });
+  }
+
+  const result = await ctx.db
+    .select()
+    .from(Account)
+    .where(
+      and(
+        eq(Account.account_id, ctx.account),
+        eq(Account.user_id, ctx.auth.userId),
+      ),
+    )
+    .limit(1);
+
+  if (result[0].account_id != ctx.account) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
   return next({
     ctx: {
       auth: ctx.auth,
+      account: ctx.account,
     },
   });
 });
