@@ -12,7 +12,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Input } from "@/components/ui/input";
-import { useAccountStore } from "@/lib/store";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import Spinner from "@/components/ui/spinner";
@@ -30,12 +29,9 @@ const formSchema = z
   .required();
 
 export default function Transfer() {
-  const { current_account_id } = useAccountStore();
   const mutation = api.account.transferMoney.useMutation();
   const { data: transactions, isLoading } =
-    api.transaction.getTransactionsHistory.useQuery({
-      account_id: current_account_id!,
-    });
+    api.transaction.getTransactionsHistory.useQuery();
   const utils = api.useUtils();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -49,15 +45,12 @@ export default function Transfer() {
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     return mutation
       .mutateAsync({
-        transfer_from: current_account_id!,
         ...values,
       })
       .then(() => {
         const { amount, transfer_to } = values;
         toast(`Successfully transferred ${amount} to ${transfer_to}`);
-        utils.account.getAccountDetail.fetch({
-          account_id: current_account_id!,
-        });
+        utils.account.getAccountDetail.fetch();
       });
   };
 
@@ -65,7 +58,7 @@ export default function Transfer() {
     <>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="flex flex-col justify-center items-center space-y-2">
+          <div className="flex flex-col items-center justify-center space-y-2">
             <FormField
               control={form.control}
               name="transfer_to"
@@ -108,13 +101,11 @@ export default function Transfer() {
       </Form>
 
       {!transactions || isLoading ? (
-        <Spinner 
-          text="Loading transactions..."/>
+        <Spinner text="Loading transactions..." />
       ) : transactions.length === 0 ? (
         "No transactions"
       ) : (
-        <TransactionTable 
-          data={ transactions }/>
+        <TransactionTable data={transactions} />
       )}
     </>
   );

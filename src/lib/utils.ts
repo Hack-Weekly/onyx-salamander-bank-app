@@ -8,7 +8,7 @@ export function cn(...inputs: ClassValue[]) {
 export function headerCookieToJSON(cookie: string) {
   const cookies = cookie.split(";");
 
-  let json = {} as Partial<{
+  const json = {} as Partial<{
     [key: string]: string;
   }>;
   cookies.forEach((cookie) => {

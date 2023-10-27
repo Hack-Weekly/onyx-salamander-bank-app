@@ -1,7 +1,6 @@
 import { type NextPage } from "next";
 
 import { api } from "@/lib/api";
-import { useAccountStore } from "@/lib/store";
 import AccountCard from "@/components/account/account-card";
 import SkeletonAccountCard from "@/components/account/skeleton-account-card";
 import Head from "next/head";
@@ -10,20 +9,9 @@ import TransactionTable from "@/components/transaction/transaction-table";
 import { Separator } from "@/components/ui/separator";
 
 const Home: NextPage = () => {
-  const { current_account_id } = useAccountStore();
-
-  const { data: account } = api.account.getAccountDetail.useQuery(
-    {
-      account_id: current_account_id!,
-    },
-    {
-      enabled: current_account_id !== null,
-    },
-  );
+  const { data: account } = api.account.getAccountDetail.useQuery();
   const { data: transactions, isLoading: transactionIsLoading } =
-    api.transaction.getTransactionsHistory.useQuery({
-      account_id: current_account_id!,
-    });
+    api.transaction.getTransactionsHistory.useQuery();
 
   return (
     <>

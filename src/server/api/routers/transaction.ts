@@ -1,7 +1,6 @@
 import { Account, Transaction } from "@/server/db/schema";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { eq, or } from "drizzle-orm";
-import { z } from "zod";
 import { alias } from "drizzle-orm/pg-core";
 import { clerkClient } from "@clerk/nextjs";
 import { type User } from "@clerk/nextjs/server";

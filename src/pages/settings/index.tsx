@@ -19,7 +19,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
-import { useAccountStore } from "@/lib/store";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Settings() {
@@ -28,16 +27,8 @@ export default function Settings() {
     "account_id"
   >;
 
-  const { current_account_id } = useAccountStore();
-
-  const { data: preferences, isLoading } = api.account.getPreferences.useQuery(
-    {
-      account_id: current_account_id!,
-    },
-    {
-      enabled: current_account_id !== null,
-    },
-  );
+  const { data: preferences, isLoading } =
+    api.account.getPreferences.useQuery();
   const setPreferences = api.account.setPreferences.useMutation();
   const utils = api.useUtils();
 
@@ -62,7 +53,6 @@ export default function Settings() {
     setPreferences
       .mutateAsync({
         transfer_limit: data.transfer_limit,
-        account_id: current_account_id!,
       })
       .then(() => {
         toast("Successfully set preferences.");
@@ -93,7 +83,7 @@ export default function Settings() {
               <>
                 <div>
                   <Skeleton className="h-4 w-1/4" />
-                  <Skeleton className="h-10 w-full mt-2" />
+                  <Skeleton className="mt-2 h-10 w-full" />
                 </div>
                 <Skeleton className="h-10 w-36" />
               </>
