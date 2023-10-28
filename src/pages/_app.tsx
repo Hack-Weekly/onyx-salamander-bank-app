@@ -21,8 +21,8 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         <SignedOut>
           <Component {...pageProps} />
         </SignedOut>
-        <Toaster />
       </main>
+      <Toaster richColors />
     </ClerkProvider>
   );
 };
