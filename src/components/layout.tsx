@@ -19,13 +19,14 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       if (current_account_id === null && accounts && accounts.length > 0) {
         // Set the first account from the 'accounts.data' list
         // TODO: Maybe have option to set as default account
-        changeAccount(accounts[0].account_id);
         fetch("/api/cookie", {
           method: "POST",
           body: JSON.stringify({
             name: "current_account_id",
             value: accounts[0].account_id,
           }),
+        }).then(() => {
+          changeAccount(accounts[0].account_id);
         });
       } else if (accounts?.length === 0) {
         changeAccount(null);
@@ -49,7 +50,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       </div>
       <div className="flex-1 space-y-4 p-8 pt-6">
         {accounts ? (
-          accounts.length > 0 ? (
+          current_account_id ? (
             children
           ) : (
             <CreateAccount />
