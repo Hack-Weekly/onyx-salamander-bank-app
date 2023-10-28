@@ -14,8 +14,6 @@ import * as z from "zod";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import Spinner from "@/components/ui/spinner";
-import TransactionTable from "@/components/transaction/transaction-table";
 
 const formSchema = z
   .object({
@@ -30,8 +28,6 @@ const formSchema = z
 
 export default function Transfer() {
   const mutation = api.account.transferMoney.useMutation();
-  const { data: transactions, isLoading } =
-    api.transaction.getTransactionsHistory.useQuery();
   const utils = api.useUtils();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -99,14 +95,6 @@ export default function Transfer() {
           </div>
         </form>
       </Form>
-
-      {!transactions || isLoading ? (
-        <Spinner text="Loading transactions..." />
-      ) : transactions.length === 0 ? (
-        "No transactions"
-      ) : (
-        <TransactionTable data={transactions} />
-      )}
     </>
   );
 }
