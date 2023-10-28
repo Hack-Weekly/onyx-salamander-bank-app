@@ -75,9 +75,12 @@
   }
 }
 
-html {
+html,
+body,
+body > div:first-child {
   height: 100%;
 }
-body {
+
+body > div:first-child > main {
   min-height: 100%;
 }
