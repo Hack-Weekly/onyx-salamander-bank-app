@@ -1,15 +1,11 @@
 import { type NextPage } from "next";
 
-import { api } from "@/lib/api";
-import AccountCard from "@/components/account/account-card";
-import SkeletonAccountCard from "@/components/account/skeleton-account-card";
+import AccountBalanceCard from "@/components/account/account-balance-card";
 import Head from "next/head";
 import TransactionTable from "@/components/transaction/transaction-table";
 import { Separator } from "@/components/ui/separator";
 
 const Home: NextPage = () => {
-  const { data: account } = api.account.getAccountDetail.useQuery();
-
   return (
     <>
       <Head>
@@ -20,11 +16,7 @@ const Home: NextPage = () => {
         <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
         <Separator />
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          {account == undefined ? (
-            <SkeletonAccountCard />
-          ) : (
-            <AccountCard balance={Number(account.balance).toFixed(2)} />
-          )}
+          <AccountBalanceCard />
         </div>
       </div>
       <div className="flex-1 space-y-4 ">
