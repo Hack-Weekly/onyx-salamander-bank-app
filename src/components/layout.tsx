@@ -20,18 +20,17 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         // Set the first account from the 'accounts.data' list
         // TODO: Maybe have option to set as default account
         changeAccount(accounts[0].account_id);
+        fetch("/api/cookie", {
+          method: "POST",
+          body: JSON.stringify({
+            name: "current_account_id",
+            value: accounts[0].account_id,
+          }),
+        });
       } else if (accounts?.length === 0) {
         changeAccount(null);
       }
     }
-
-    fetch("/api/cookie", {
-      method: "POST",
-      body: JSON.stringify({
-        name: "current_account_id",
-        value: current_account_id,
-      }),
-    });
   }, [current_account_id, accounts, changeAccount, isLoading]);
 
   return (
