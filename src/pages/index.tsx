@@ -4,14 +4,11 @@ import { api } from "@/lib/api";
 import AccountCard from "@/components/account/account-card";
 import SkeletonAccountCard from "@/components/account/skeleton-account-card";
 import Head from "next/head";
-import Spinner from "@/components/ui/spinner";
 import TransactionTable from "@/components/transaction/transaction-table";
 import { Separator } from "@/components/ui/separator";
 
 const Home: NextPage = () => {
   const { data: account } = api.account.getAccountDetail.useQuery();
-  const { data: transactions, isLoading: transactionIsLoading } =
-    api.transaction.getTransactionsHistory.useQuery();
 
   return (
     <>
@@ -30,16 +27,10 @@ const Home: NextPage = () => {
           )}
         </div>
       </div>
-      <div className="flex-1 space-y-4 p-8 pt-6">
+      <div className="flex-1 space-y-4 p-8">
         <h3 className="text-2xl font-bold tracking-tight">Transactions</h3>
         <Separator />
-        {!transactions || transactionIsLoading ? (
-          <Spinner text="Loading transactions..." />
-        ) : transactions.length === 0 ? (
-          "No transactions"
-        ) : (
-          <TransactionTable data={transactions} />
-        )}
+        <TransactionTable />
       </div>
     </>
   );
