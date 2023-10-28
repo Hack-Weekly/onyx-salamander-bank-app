@@ -95,13 +95,15 @@ export default function TransactionTable() {
                 ))
             ) : (
               <>
-                {transactions.map((transaction) =>
+                {transactions.map((transaction, index) =>
                   transaction == undefined ? null : (
                     <TableRow
                       key={
                         transaction.timestamp.toString() +
                         transaction.to.account_id +
-                        transaction.from.account_id
+                        transaction.from.account_id +
+                        transaction.amount +
+                        index
                       }
                     >
                       <TableCell className="p-4">
