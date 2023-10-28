@@ -72,12 +72,13 @@ export default function Transfer() {
       .then(() => {
         const { amount, transfer_to } = values;
         toast.success(
-          `Successfully transferred ${Number(amount).toFixed(
+          `Successfully transferred $${Number(amount).toFixed(
             2,
-          )} to acocunt ${transfer_to}`,
+          )} to acocunt ${transfer_to}.`,
         );
         form.reset();
-        utils.account.getAccountDetail.fetch();
+        utils.account.getAccountDetail.invalidate();
+        utils.transaction.getTransactionsHistory.invalidate();
       })
       .catch(() => {
         toast.error(`Transfer amount is larger than account's transfer limit`);
