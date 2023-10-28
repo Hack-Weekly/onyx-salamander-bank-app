@@ -46,8 +46,9 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
         value: account_id,
       }),
     }).then(() => {
-      utils.account.invalidate();
-      utils.transaction.invalidate();
+      utils.account.getAccountDetail.reset();
+      utils.account.getPreferences.reset();
+      utils.transaction.getTransactionsHistory.reset();
     });
   };
 
