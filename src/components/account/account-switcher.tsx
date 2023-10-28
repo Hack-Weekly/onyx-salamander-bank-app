@@ -119,7 +119,7 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
                   {loadingCookie ? (
                     <Loader2
                       className={cn(
-                        "ml-auto h-4 w-4",
+                        "ml-auto h-4 w-4 animate-spin",
                         current_account_id === account.account_id
                           ? "opacity-100"
                           : "opacity-0",
