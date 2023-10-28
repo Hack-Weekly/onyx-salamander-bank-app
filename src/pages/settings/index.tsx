@@ -51,12 +51,12 @@ export default function Settings() {
   });
 
   const onSubmit = (data: SettingsFormValues) => {
-    setPreferences
+    return setPreferences
       .mutateAsync({
         transfer_limit: data.transfer_limit,
       })
       .then(() => {
-        toast("Successfully set preferences.");
+        toast.success("Successfully set preferences.");
         utils.account.getPreferences.invalidate();
       });
   };
