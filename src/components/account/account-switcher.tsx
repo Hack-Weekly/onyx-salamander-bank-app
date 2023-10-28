@@ -37,7 +37,7 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
 
   const onChangeAccount = (account_id: string) => {
     setOpen(false);
-    
+
     if (current_account_id !== account_id) {
       changeAccount(account_id);
 
@@ -97,7 +97,7 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
                   <Avatar className="mr-2 h-5 w-5">
                     <AvatarImage
                       src={`https://avatar.vercel.sh/${account.account_id}.png`}
-                      alt={account.account_id}
+                      alt={`Account number: account.account_id`}
                     />
                     <AvatarFallback>SC</AvatarFallback>
                   </Avatar>
