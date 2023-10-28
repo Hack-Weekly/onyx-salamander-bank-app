@@ -71,7 +71,12 @@ export default function Transfer() {
       })
       .then(() => {
         const { amount, transfer_to } = values;
-        toast(`Successfully transferred ${amount} to ${transfer_to}`);
+        toast.success(
+          `Successfully transferred ${Number(amount).toFixed(
+            2,
+          )} to acocunt ${transfer_to}`,
+        );
+        form.reset();
         utils.account.getAccountDetail.fetch();
       })
       .catch(() => {
