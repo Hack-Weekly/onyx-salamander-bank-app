@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 import { Account, Transaction, statusEnum } from "@/server/db/schema";
 import { and, eq, sql } from "drizzle-orm";
@@ -74,53 +75,73 @@ export const accountRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const result = await ctx.db.transaction(async (tx) => {
-        const [account] = await tx
-          .select({
-            balance: Account.balance,
-          })
-          .from(Account)
-          .where(
-            and(
-              eq(Account.account_id, ctx.account!),
-              eq(Account.user_id, ctx.auth.userId),
-            ),
-          );
-
-        if (Number(account.balance) < Number(input.amount))
-          return await tx.rollback();
-
-        await tx
-          .update(Account)
-          .set({
-            balance: sql`${Account.balance} - ${input.amount}`,
-          })
-          .where(
-            and(
-              eq(Account.account_id, ctx.account!),
-              eq(Account.user_id, ctx.auth.userId),
-            ),
-          );
-        await tx
-          .update(Account)
-          .set({
-            balance: sql`${Account.balance} + ${input.amount}`,
-          })
-          .where(eq(Account.account_id, input.transfer_to));
-        const transaction = await tx
-          .insert(Transaction)
-          .values({
-            from_account_id: ctx.account!,
-            to_account_id: input.transfer_to,
-            amount: input.amount,
-            status: statusEnum.enumValues[1],
-          })
-          .returning();
-
-        return transaction;
+      const result = await ctx.db.query.Account.findFirst({
+        columns: {
+          transfer_limit: true,
+          balance: true,
+        },
+        where: eq(Account.account_id, ctx.account!),
       });
 
-      return result;
+      if (Number(input.amount) > Number(result?.transfer_limit)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Transfer amount is larger than account's transfer limit.",
+        });
+      } else if (Number(input.amount) > Number(result?.balance)) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Transfer amount is larger than account's balance.",
+        });
+      } else {
+        const result = await ctx.db.transaction(async (tx) => {
+          const [account] = await tx
+            .select({
+              balance: Account.balance,
+            })
+            .from(Account)
+            .where(
+              and(
+                eq(Account.account_id, ctx.account!),
+                eq(Account.user_id, ctx.auth.userId),
+              ),
+            );
+
+          if (Number(account.balance) < Number(input.amount))
+            return await tx.rollback();
+
+          await tx
+            .update(Account)
+            .set({
+              balance: sql`${Account.balance} - ${input.amount}`,
+            })
+            .where(
+              and(
+                eq(Account.account_id, ctx.account!),
+                eq(Account.user_id, ctx.auth.userId),
+              ),
+            );
+          await tx
+            .update(Account)
+            .set({
+              balance: sql`${Account.balance} + ${input.amount}`,
+            })
+            .where(eq(Account.account_id, input.transfer_to));
+          const transaction = await tx
+            .insert(Transaction)
+            .values({
+              from_account_id: ctx.account!,
+              to_account_id: input.transfer_to,
+              amount: input.amount,
+              status: statusEnum.enumValues[1],
+            })
+            .returning();
+
+          return transaction;
+        });
+
+        return result;
+      }
     }),
   createAccount: protectedProcedure.mutation(async ({ ctx }) => {
     const result = await ctx.db
