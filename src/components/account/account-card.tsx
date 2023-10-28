@@ -21,9 +21,6 @@ export default function AccountCard({ balance }: { balance?: string }) {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">${balance}</div>
-          <p className="text-xs text-muted-foreground">
-            show growth from last month?
-          </p>
         </CardContent>
       </Card>
     </>
