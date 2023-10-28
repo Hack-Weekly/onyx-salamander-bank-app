@@ -66,33 +66,35 @@ export default function Transfer() {
       <Separator className="my-6" />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-            control={form.control}
-            name="transfer_to"
-            render={({ field: { onChange, value } }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Transfer to</FormLabel>
-                <FormControl>
-                  <TransferSelector account_id={value} onChange={onChange} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="transfer_to"
+              render={({ field: { onChange, value } }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Transfer to</FormLabel>
+                  <FormControl>
+                    <TransferSelector account_id={value} onChange={onChange} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          <FormField
-            control={form.control}
-            name="amount"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Amount</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter an amount" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+            <FormField
+              control={form.control}
+              name="amount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Amount</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter an amount" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           <Button type="submit" disabled={form.formState.isSubmitting}>
             {form.formState.isSubmitting ? (

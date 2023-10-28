@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Loader2 } from "lucide-react";
 
 export default function Settings() {
   type SettingsFormValues = Omit<
@@ -80,7 +81,7 @@ export default function Settings() {
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           {isLoading ? (
             <>
-              <div>
+              <div className="space-y-4">
                 <Skeleton className="h-4 w-1/4" />
                 <Skeleton className="mt-2 h-10 w-full" />
               </div>
@@ -88,24 +89,35 @@ export default function Settings() {
             </>
           ) : (
             <>
-              <FormField
-                control={form.control}
-                name="transfer_limit"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Transfer Limit</FormLabel>
-                    <FormControl>
-                      <Input placeholder="2000" {...field} />
-                    </FormControl>
-                    <FormDescription>
-                      This is how much you can transfer to other accounts.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="space-y-4">
+                <FormField
+                  control={form.control}
+                  name="transfer_limit"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Transfer Limit</FormLabel>
+                      <FormControl>
+                        <Input placeholder="2000" {...field} />
+                      </FormControl>
+                      <FormDescription>
+                        This is how much you can transfer to other accounts.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-              <Button type="submit">Update Account</Button>
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? (
+                  <span className="flex items-center gap-1">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                    Updating
+                  </span>
+                ) : (
+                  "Update Account"
+                )}
+              </Button>
             </>
           )}
         </form>
