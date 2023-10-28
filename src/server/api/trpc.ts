@@ -92,7 +92,7 @@ const isAuthed = t.middleware(async ({ next, ctx }) => {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
-  if (ctx.account == undefined) {
+  if (ctx.account === undefined || ctx.account === "") {
     return next({
       ctx: {
         auth: ctx.auth,
