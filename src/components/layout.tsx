@@ -34,8 +34,6 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         setHasInitialized(true);
       }
     }
-
-    console.log(hasInitialized);
   }, [current_account_id, accounts, changeAccount, isLoading]);
 
   return (
