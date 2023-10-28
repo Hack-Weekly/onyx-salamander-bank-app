@@ -149,7 +149,7 @@ export const accountRouter = createTRPCRouter({
       .values({
         account_id: generateAccountNumber(),
         user_id: ctx.auth.userId,
-        balance: "0",
+        balance: "1000",
         transfer_limit: "1000",
       })
       .returning();
