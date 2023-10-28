@@ -22,6 +22,8 @@ import {
   PlusCircledIcon,
 } from "@radix-ui/react-icons";
 import CreateAccountButton from "./create-account-button";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
@@ -31,14 +33,17 @@ interface AccountSwitcherProps extends PopoverTriggerProps {}
 
 export default function AccountSwitcher({ className }: AccountSwitcherProps) {
   const [open, setOpen] = React.useState(false);
+  const [loadingCookie, setLoadingCookie] = React.useState(false);
   const { current_account_id, changeAccount } = useAccountStore();
+  const [previousAccountId, setPreviousAccountId] =
+    React.useState(current_account_id);
   const { data: accounts } = api.account.list.useQuery();
   const utils = api.useUtils();
 
   const onChangeAccount = (account_id: string) => {
-    setOpen(false);
-
     if (current_account_id !== account_id) {
+      setLoadingCookie(true);
+      setPreviousAccountId(current_account_id);
       changeAccount(account_id);
 
       fetch("/api/cookie", {
@@ -47,11 +52,20 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
           name: "current_account_id",
           value: account_id,
         }),
-      }).then(() => {
-        utils.account.getAccountDetail.reset();
-        utils.account.getPreferences.reset();
-        utils.transaction.getTransactionsHistory.reset();
-      });
+      })
+        .then(() => {
+          setLoadingCookie(false);
+          setOpen(false);
+          utils.account.getAccountDetail.reset();
+          utils.account.getPreferences.reset();
+          utils.transaction.getTransactionsHistory.reset();
+        })
+        .catch(() => {
+          changeAccount(previousAccountId);
+          toast.error("Something went wrong while switching account.");
+        });
+    } else {
+      setOpen(false);
     }
   };
 
@@ -102,14 +116,25 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
                     <AvatarFallback>SC</AvatarFallback>
                   </Avatar>
                   {account.account_id}
-                  <CheckIcon
-                    className={cn(
-                      "ml-auto h-4 w-4",
-                      current_account_id === account.account_id
-                        ? "opacity-100"
-                        : "opacity-0",
-                    )}
-                  />
+                  {loadingCookie ? (
+                    <Loader2
+                      className={cn(
+                        "ml-auto h-4 w-4",
+                        current_account_id === account.account_id
+                          ? "opacity-100"
+                          : "opacity-0",
+                      )}
+                    />
+                  ) : (
+                    <CheckIcon
+                      className={cn(
+                        "ml-auto h-4 w-4",
+                        current_account_id === account.account_id
+                          ? "opacity-100"
+                          : "opacity-0",
+                      )}
+                    />
+                  )}
                 </CommandItem>
               ))}
             </CommandGroup>
