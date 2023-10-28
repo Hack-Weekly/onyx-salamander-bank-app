@@ -33,6 +33,23 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
   const [open, setOpen] = React.useState(false);
   const { current_account_id, changeAccount } = useAccountStore();
   const { data: accounts } = api.account.list.useQuery();
+  const utils = api.useUtils();
+
+  const onChangeAccount = (account_id: string) => {
+    setOpen(false);
+    changeAccount(account_id);
+
+    fetch("/api/cookie", {
+      method: "POST",
+      body: JSON.stringify({
+        name: "current_account_id",
+        value: account_id,
+      }),
+    }).then(() => {
+      utils.account.invalidate();
+      utils.transaction.invalidate();
+    });
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -70,10 +87,7 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
               {accounts?.map((account) => (
                 <CommandItem
                   key={account.account_id}
-                  onSelect={() => {
-                    setOpen(false);
-                    changeAccount(account.account_id);
-                  }}
+                  onSelect={() => onChangeAccount(account.account_id)}
                   className="text-sm"
                 >
                   <Avatar className="mr-2 h-5 w-5">
