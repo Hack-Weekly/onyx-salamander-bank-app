@@ -32,6 +32,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       } else if (accounts?.length === 0) {
         changeAccount(null);
         setHasInitialized(true);
+      } else {
+        setHasInitialized(true);
       }
     }
   }, [current_account_id, accounts, changeAccount, isLoading]);
