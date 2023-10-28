@@ -37,19 +37,22 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
 
   const onChangeAccount = (account_id: string) => {
     setOpen(false);
-    changeAccount(account_id);
+    
+    if (current_account_id !== account_id) {
+      changeAccount(account_id);
 
-    fetch("/api/cookie", {
-      method: "POST",
-      body: JSON.stringify({
-        name: "current_account_id",
-        value: account_id,
-      }),
-    }).then(() => {
-      utils.account.getAccountDetail.reset();
-      utils.account.getPreferences.reset();
-      utils.transaction.getTransactionsHistory.reset();
-    });
+      fetch("/api/cookie", {
+        method: "POST",
+        body: JSON.stringify({
+          name: "current_account_id",
+          value: account_id,
+        }),
+      }).then(() => {
+        utils.account.getAccountDetail.reset();
+        utils.account.getPreferences.reset();
+        utils.transaction.getTransactionsHistory.reset();
+      });
+    }
   };
 
   return (
