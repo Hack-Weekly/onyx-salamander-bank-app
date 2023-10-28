@@ -76,42 +76,40 @@ export default function Settings() {
       <h2 className="text-3xl font-bold tracking-tight">Settings</h2>
       <p className="text-muted-foreground">Manage your account settings.</p>
       <Separator className="my-6" />
-      <div className="flex-1 lg:max-w-2xl">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            {isLoading ? (
-              <>
-                <div>
-                  <Skeleton className="h-4 w-1/4" />
-                  <Skeleton className="mt-2 h-10 w-full" />
-                </div>
-                <Skeleton className="h-10 w-36" />
-              </>
-            ) : (
-              <>
-                <FormField
-                  control={form.control}
-                  name="transfer_limit"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Transfer Limit</FormLabel>
-                      <FormControl>
-                        <Input placeholder="2000" {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        This is how much you can transfer to other accounts.
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          {isLoading ? (
+            <>
+              <div>
+                <Skeleton className="h-4 w-1/4" />
+                <Skeleton className="mt-2 h-10 w-full" />
+              </div>
+              <Skeleton className="h-10 w-36" />
+            </>
+          ) : (
+            <>
+              <FormField
+                control={form.control}
+                name="transfer_limit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Transfer Limit</FormLabel>
+                    <FormControl>
+                      <Input placeholder="2000" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      This is how much you can transfer to other accounts.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                <Button type="submit">Update Account</Button>
-              </>
-            )}
-          </form>
-        </Form>
-      </div>
+              <Button type="submit">Update Account</Button>
+            </>
+          )}
+        </form>
+      </Form>
     </>
   );
 }
