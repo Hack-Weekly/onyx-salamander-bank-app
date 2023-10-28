@@ -48,7 +48,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <UserButton afterSignOutUrl="/sign-out" />
         </div>
       </div>
-      <div className="flex-1 space-y-4 p-8 pt-6">
+      <div className="flex-1 space-y-4 p-8">
         {accounts ? (
           current_account_id ? (
             children
