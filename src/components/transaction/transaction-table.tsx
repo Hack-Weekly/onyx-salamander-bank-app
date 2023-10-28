@@ -64,14 +64,13 @@ export default function TransactionTable() {
             {!transactions || isLoading ? (
               Array(4)
                 .fill(0)
-                .map(() => (
-                  <TableRow>
+                .map((_, i) => (
+                  <TableRow key={i}>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <Skeleton className="h-10 w-10 rounded-full " />
                         <div>
-                          <Skeleton className="h-4 w-20" />
-                          <Skeleton className="mt-1 h-4 w-36" />
+                          <Skeleton className="h-4 w-36" />
                         </div>
                       </div>
                     </TableCell>
@@ -79,8 +78,7 @@ export default function TransactionTable() {
                       <div className="flex items-center gap-2">
                         <Skeleton className="h-10 w-10 rounded-full " />
                         <div>
-                          <Skeleton className="h-4 w-20" />
-                          <Skeleton className="mt-1 h-4 w-36" />
+                          <Skeleton className="h-4 w-36" />
                         </div>
                       </div>
                     </TableCell>
@@ -110,18 +108,19 @@ export default function TransactionTable() {
                         <div className="flex items-center gap-2">
                           <Avatar>
                             <AvatarImage
-                              src={transaction.from.user.imageUrl}
-                              alt={transaction.from.user.username ?? ""}
+                              src={`https://avatar.vercel.sh/${transaction.from.account_id}.png`}
+                              alt={
+                                transaction.from.account_id
+                                  ? `Account number: ${transaction.from.account_id}`
+                                  : ""
+                              }
                             />
                             <AvatarFallback>
-                              {transaction.from.user.username ?? ""}
+                              {transaction.from.account_id ?? ""}
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <p>{transaction.from.user.username}</p>
-                            <p className="mt-1 opacity-70">
-                              {transaction.from.account_id}
-                            </p>
+                            <p>{transaction.from.account_id}</p>
                           </div>
                         </div>
                       </TableCell>
@@ -129,18 +128,19 @@ export default function TransactionTable() {
                         <div className="flex items-center gap-2">
                           <Avatar>
                             <AvatarImage
-                              src={transaction.to.user.imageUrl}
-                              alt={transaction.to.user.username ?? ""}
+                              src={`https://avatar.vercel.sh/${transaction.to.account_id}.png`}
+                              alt={
+                                transaction.to.account_id
+                                  ? `Account number: ${transaction.to.account_id}`
+                                  : ""
+                              }
                             />
                             <AvatarFallback>
-                              {transaction.to.user.username ?? ""}
+                              {transaction.to.account_id ?? ""}
                             </AvatarFallback>
                           </Avatar>
                           <div>
-                            <p>{transaction.to.user.username}</p>
-                            <p className="mt-1 opacity-70">
-                              {transaction.to.account_id}
-                            </p>
+                            <p>{transaction.to.account_id}</p>
                           </div>
                         </div>
                       </TableCell>
