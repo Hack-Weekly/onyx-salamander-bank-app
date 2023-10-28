@@ -78,7 +78,7 @@ export default function TransferSelector({
                 )}
               </CommandGroup>
             )}
-            <CommandGroup heading="Account">
+            <CommandGroup heading="Other Accounts">
               {other_accounts?.map((account) =>
                 account.account_id == current_account_id ? null : (
                   <CommandItem
