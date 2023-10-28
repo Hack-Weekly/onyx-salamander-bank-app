@@ -2,7 +2,7 @@ import { MainNav } from "@/components/main-nav";
 import { api } from "@/lib/api";
 import { useAccountStore } from "@/lib/store";
 import { UserButton } from "@clerk/nextjs";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Spinner from "@/components/ui/spinner";
 import CreateAccount from "@/components/account/create-account";
 import AccountSwitcher from "./account/account-switcher";
@@ -10,7 +10,7 @@ import Head from "next/head";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { data: accounts, isLoading } = api.account.list.useQuery();
-
+  const [hasInitialized, setHasInitialized] = useState(false);
   const { changeAccount, current_account_id } = useAccountStore();
 
   useEffect(() => {
@@ -27,11 +27,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           }),
         }).then(() => {
           changeAccount(accounts[0].account_id);
+          setHasInitialized(true);
         });
       } else if (accounts?.length === 0) {
         changeAccount(null);
+        setHasInitialized(true);
       }
     }
+
+    console.log(hasInitialized);
   }, [current_account_id, accounts, changeAccount, isLoading]);
 
   return (
@@ -49,7 +53,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </div>
       <div className="flex-1 space-y-4 p-8">
-        {accounts ? (
+        {hasInitialized ? (
           current_account_id ? (
             children
           ) : (
