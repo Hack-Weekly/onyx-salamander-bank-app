@@ -1,28 +1,8 @@
 import { Account, Transaction } from "@/server/db/schema";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { eq, or } from "drizzle-orm";
+import { desc, eq, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { clerkClient } from "@clerk/nextjs";
-import { type User } from "@clerk/nextjs/server";
-
-export type TransactionHistory =
-  | {
-      from: {
-        user: User;
-        user_id: string;
-        account_id: string;
-      };
-      to: {
-        user: User;
-        user_id: string;
-        account_id: string;
-      };
-      id: string;
-      amount: string;
-      timestamp: Date;
-      status: "pending" | "completed" | "failed";
-    }
-  | undefined;
 
 export const transactionRouter = createTRPCRouter({
   getTransactionsHistory: protectedProcedure.query(async ({ ctx }) => {
@@ -53,9 +33,9 @@ export const transactionRouter = createTRPCRouter({
       )
       .innerJoin(from, eq(Transaction.from_account_id, from.account_id))
       .innerJoin(to, eq(Transaction.from_account_id, to.account_id))
-      .orderBy(Transaction.timestamp);
+      .orderBy(desc(Transaction.timestamp));
 
-    const newResult: TransactionHistory[] = await Promise.all(
+    const newResult = await Promise.all(
       result.map(async (transaction) => {
         const from_user = await clerkClient.users.getUser(
           transaction.from.user_id,
