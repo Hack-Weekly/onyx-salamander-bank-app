@@ -11,6 +11,7 @@ import { useAccountStore } from "@/lib/store";
 import { api } from "@/lib/api";
 import { Skeleton } from "../ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { SearchX } from "lucide-react";
 
 const formatDate = (date: Date) => {
   const monthNames = [
@@ -49,7 +50,10 @@ export default function TransactionTable() {
   return (
     <>
       {transactions && transactions.length === 0 ? (
-        "No transactions"
+        <div className="flex h-[20vh] flex-col items-center justify-center gap-2">
+          <SearchX height={40} width={40} />
+          No transactions
+        </div>
       ) : (
         <Table>
           <TableHeader>
