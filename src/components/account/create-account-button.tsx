@@ -16,7 +16,7 @@ import { useAccountStore } from "@/lib/store";
 import { api } from "@/lib/api";
 
 type ButtonProps = React.ComponentPropsWithoutRef<typeof Button> & {
-  onProcessed: () => void;
+  onProcessed?: () => void;
 };
 
 export default function CreateAccountButton({
@@ -48,7 +48,9 @@ export default function CreateAccountButton({
                   changeAccount(account_id);
                   resetDataOnAccountChange(utils);
                   toast.success("Succesfully created account.");
-                  onProcessed();
+                  if (onProcessed) {
+                    onProcessed();
+                  }
                 })
               }
             >
