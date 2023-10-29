@@ -10,8 +10,16 @@ export default function SignOut() {
   queryClient.resetQueries();
 
   useEffect(() => {
-    clearStore();
-    router.replace("/");
+    fetch("/api/cookie", {
+      method: "POST",
+      body: JSON.stringify({
+        name: "current_account_id",
+        value: "",
+      }),
+    }).then(() => {
+      clearStore();
+      router.replace("/");
+    });
   }, []);
 
   return <></>;
