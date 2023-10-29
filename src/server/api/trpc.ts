@@ -111,7 +111,7 @@ const isAuthed = t.middleware(async ({ next, ctx }) => {
     )
     .limit(1);
 
-  if (result[0].account_id != ctx.account) {
+  if (result.length < 1 || result[0].account_id != ctx.account) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 
