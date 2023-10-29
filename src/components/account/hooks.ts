@@ -3,7 +3,6 @@ import { useAccountStore } from "@/lib/store";
 
 export const useCreateAccount = () => {
   const accountCreation = api.account.createAccount.useMutation();
-  const utils = api.useUtils();
   const { changeAccount } = useAccountStore();
 
   const createAccount = async () => {
@@ -16,11 +15,17 @@ export const useCreateAccount = () => {
       }),
     }).then(() => {
       changeAccount(result.account_id);
-      utils.account.getAccountDetail.reset();
-      utils.account.getPreferences.reset();
-      utils.transaction.getTransactionsHistory.reset();
+      resetDataOnAccountChange();
     });
   };
 
   return createAccount;
+};
+
+export const resetDataOnAccountChange = () => {
+  const utils = api.useUtils();
+
+  utils.account.getAccountDetail.reset();
+  utils.account.getPreferences.reset();
+  utils.transaction.getTransactionsHistory.reset();
 };

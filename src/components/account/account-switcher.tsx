@@ -24,6 +24,7 @@ import {
 import CreateAccountButton from "./create-account-button";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { resetDataOnAccountChange } from "./hooks";
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<
   typeof PopoverTrigger
@@ -38,7 +39,6 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
   const [pendingAccountId, setPendingAccountId] =
     React.useState(current_account_id);
   const { data: accounts } = api.account.list.useQuery();
-  const utils = api.useUtils();
 
   const onChangeAccount = (account_id: string) => {
     if (current_account_id !== account_id) {
@@ -56,9 +56,7 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
           changeAccount(account_id);
           setLoadingCookie(false);
           setOpen(false);
-          utils.account.getAccountDetail.reset();
-          utils.account.getPreferences.reset();
-          utils.transaction.getTransactionsHistory.reset();
+          resetDataOnAccountChange();
         })
         .catch(() => {
           toast.error("Something went wrong while switching account.");
