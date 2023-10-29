@@ -15,9 +15,14 @@ import { toast } from "sonner";
 import { useAccountStore } from "@/lib/store";
 import { api } from "@/lib/api";
 
-type ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;
+type ButtonProps = React.ComponentPropsWithoutRef<typeof Button> & {
+  onProcessed: () => void;
+};
 
-export default function CreateAccountButton(props: ButtonProps) {
+export default function CreateAccountButton({
+  onProcessed,
+  ...props
+}: ButtonProps) {
   const createAccount = useCreateAccount();
   const { changeAccount } = useAccountStore();
   const utils = api.useUtils();
@@ -43,6 +48,7 @@ export default function CreateAccountButton(props: ButtonProps) {
                   changeAccount(account_id);
                   resetDataOnAccountChange(utils);
                   toast.success("Succesfully created account.");
+                  onProcessed();
                 })
               }
             >

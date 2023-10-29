@@ -145,6 +145,7 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
                 <CreateAccountButton
                   variant={"ghost"}
                   className="h-0 cursor-default px-0 text-sm font-normal"
+                  onProcessed={() => setOpen(false)}
                 />
               </CommandItem>
             </CommandGroup>
