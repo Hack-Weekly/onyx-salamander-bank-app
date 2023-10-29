@@ -35,7 +35,7 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
   const [open, setOpen] = React.useState(false);
   const [loadingCookie, setLoadingCookie] = React.useState(false);
   const { current_account_id, changeAccount } = useAccountStore();
-  const [previousAccountId, setPreviousAccountId] =
+  const [pendingAccountId, setPendingAccountId] =
     React.useState(current_account_id);
   const { data: accounts } = api.account.list.useQuery();
   const utils = api.useUtils();
@@ -43,8 +43,7 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
   const onChangeAccount = (account_id: string) => {
     if (current_account_id !== account_id) {
       setLoadingCookie(true);
-      setPreviousAccountId(current_account_id);
-      changeAccount(account_id);
+      setPendingAccountId(account_id);
 
       fetch("/api/cookie", {
         method: "POST",
@@ -54,6 +53,7 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
         }),
       })
         .then(() => {
+          changeAccount(account_id);
           setLoadingCookie(false);
           setOpen(false);
           utils.account.getAccountDetail.reset();
@@ -61,7 +61,6 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
           utils.transaction.getTransactionsHistory.reset();
         })
         .catch(() => {
-          changeAccount(previousAccountId);
           toast.error("Something went wrong while switching account.");
         });
     } else {
@@ -120,7 +119,7 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
                     <Loader2
                       className={cn(
                         "ml-auto h-4 w-4 animate-spin",
-                        current_account_id === account.account_id
+                        pendingAccountId === account.account_id
                           ? "opacity-100"
                           : "opacity-0",
                       )}
