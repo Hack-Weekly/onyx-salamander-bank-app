@@ -10,12 +10,17 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useCreateAccount } from "./hooks";
+import { resetDataOnAccountChange, useCreateAccount } from "./hooks";
+import { toast } from "sonner";
+import { useAccountStore } from "@/lib/store";
+import { api } from "@/lib/api";
 
 type ButtonProps = React.ComponentPropsWithoutRef<typeof Button>;
 
 export default function CreateAccountButton(props: ButtonProps) {
   const createAccount = useCreateAccount();
+  const { changeAccount } = useAccountStore();
+  const utils = api.useUtils();
 
   return (
     <>
@@ -32,7 +37,15 @@ export default function CreateAccountButton(props: ButtonProps) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => createAccount()}>
+            <AlertDialogAction
+              onClick={() =>
+                createAccount().then((account_id) => {
+                  changeAccount(account_id);
+                  resetDataOnAccountChange(utils);
+                  toast.success("Succesfully created account.");
+                })
+              }
+            >
               Confirm
             </AlertDialogAction>
           </AlertDialogFooter>

@@ -39,6 +39,7 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
   const [pendingAccountId, setPendingAccountId] =
     React.useState(current_account_id);
   const { data: accounts } = api.account.list.useQuery();
+  const utils = api.useUtils();
 
   const onChangeAccount = (account_id: string) => {
     if (current_account_id !== account_id) {
@@ -56,7 +57,7 @@ export default function AccountSwitcher({ className }: AccountSwitcherProps) {
           changeAccount(account_id);
           setLoadingCookie(false);
           setOpen(false);
-          resetDataOnAccountChange();
+          resetDataOnAccountChange(utils);
         })
         .catch(() => {
           toast.error("Something went wrong while switching account.");
