@@ -128,6 +128,9 @@ export default function Transfer() {
       }.bind(null, values),
     );
     toast.success(`Transfer scheduled on ${format(values.date, "PPP")}.`);
+    form.reset();
+    utils.account.getAccountDetail.invalidate();
+    utils.transaction.getTransactionsHistory.invalidate();
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
