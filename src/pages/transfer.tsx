@@ -34,7 +34,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { cn } from "@/lib/utils";
+import { cn, compareDate } from "@/lib/utils";
 import { format } from "date-fns";
 import { DateBefore } from "react-day-picker";
 import * as schedule from "node-schedule";
@@ -128,11 +128,14 @@ export default function Transfer() {
       }.bind(null, values),
     );
     toast.success(`Transfer scheduled on ${format(values.date, "PPP")}.`);
+    form.reset();
+    utils.account.getAccountDetail.invalidate();
+    utils.transaction.getTransactionsHistory.invalidate();
   };
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (values.date != currentDate) return await scheduleTransfer(values);
-    return await transfer(values);
+    if (compareDate(values.date, currentDate)) return await transfer(values);
+    return await scheduleTransfer(values);
   };
 
   return (
@@ -194,7 +197,11 @@ export default function Transfer() {
                 />
               </div>
               <div className="space-x-5">
-                <Button type="submit" disabled={form.formState.isSubmitting}>
+                <Button
+                  onClick={() => form.setValue("date", new Date())}
+                  type="submit"
+                  disabled={form.formState.isSubmitting}
+                >
                   {form.formState.isSubmitting ? (
                     <span className="flex items-center gap-1">
                       <Loader2 className="h-6 w-6 animate-spin" />

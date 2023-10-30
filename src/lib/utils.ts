@@ -18,3 +18,13 @@ export function headerCookieToJSON(cookie: string) {
 
   return json;
 }
+
+export function compareDate(date1: Date, date2: Date): boolean {
+  const date1String =
+    date1.getDate() + "/" + date1.getMonth() + "/" + date1.getFullYear();
+  const date2String =
+    date2.getDate() + "/" + date2.getMonth() + "/" + date2.getFullYear();
+  console.log(date1String);
+  console.log(date2String);
+  return date1String == date2String;
+}
