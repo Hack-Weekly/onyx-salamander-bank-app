@@ -143,16 +143,32 @@ export default function Transfer() {
                   )}
                 />
               </div>
-              <Button type="submit" disabled={form.formState.isSubmitting}>
-                {form.formState.isSubmitting ? (
-                  <span className="flex items-center gap-1">
-                    <Loader2 className="h-6 w-6 animate-spin" />
-                    Transferring
-                  </span>
-                ) : (
-                  "Transfer now"
-                )}
-              </Button>
+              <div className="space-x-5">
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? (
+                    <span className="flex items-center gap-1">
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                      Transferring
+                    </span>
+                  ) : (
+                    "Transfer now"
+                  )}
+                </Button>
+                <Button
+                  variant="secondary"
+                  type="submit"
+                  disabled={form.formState.isSubmitting}
+                >
+                  {form.formState.isSubmitting ? (
+                    <span className="flex items-center gap-1">
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                      Scheduling
+                    </span>
+                  ) : (
+                    "Transfer later"
+                  )}
+                </Button>
+              </div>
             </>
           )}
         </form>
