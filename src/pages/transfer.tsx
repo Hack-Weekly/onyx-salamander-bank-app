@@ -45,8 +45,9 @@ export default function Transfer() {
   const [openDialog, setOpenDialog] = useState(false);
   const [openCalendar, setOpenCalendar] = useState(false);
   const [date, setDate] = useState<Date>();
+  const currentDate = new Date();
 
-  const disabledDays: DateBefore = { before: new Date() };
+  const disabledDays: DateBefore = { before: currentDate };
 
   const formSchema = z
     .object({
@@ -82,7 +83,7 @@ export default function Transfer() {
           required_error: "Please select a date and time",
           invalid_type_error: "That's not a date!",
         })
-        .min(new Date(Date.now()), {
+        .min(currentDate, {
           message: "Please select a valid date and time.",
         }),
     })
@@ -93,11 +94,11 @@ export default function Transfer() {
     defaultValues: {
       transfer_to: "",
       amount: "",
-      date: new Date(Date.now()),
+      date: currentDate,
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const transfer = async (values: z.infer<typeof formSchema>) => {
     return mutation
       .mutateAsync({
         ...values,
@@ -116,6 +117,10 @@ export default function Transfer() {
       .catch(() => {
         toast.error(`Transfer amount is larger than account's transfer limit`);
       });
+  };
+
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (values.date != currentDate) return await transfer(values);
   };
 
   return (
