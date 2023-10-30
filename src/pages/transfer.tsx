@@ -37,6 +37,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { DateBefore } from "react-day-picker";
+import * as schedule from "node-schedule";
 
 export default function Transfer() {
   const mutation = api.account.transferMoney.useMutation();
@@ -120,8 +121,7 @@ export default function Transfer() {
   };
 
   const scheduleTransfer = async (values: z.infer<typeof formSchema>) => {
-    const schedule = require("node-schedule");
-    const job = schedule.scheduleJob(
+    schedule.scheduleJob(
       values.date,
       function (values: z.infer<typeof formSchema>) {
         transfer(values);
