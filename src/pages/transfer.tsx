@@ -14,15 +14,39 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { CalendarIcon, Loader2 } from "lucide-react";
 import Head from "next/head";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { DialogClose, DialogDescription } from "@radix-ui/react-dialog";
+import { useState } from "react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { DateBefore } from "react-day-picker";
 
 export default function Transfer() {
   const mutation = api.account.transferMoney.useMutation();
   const utils = api.useUtils();
   const { data: details, isLoading } = api.account.getAccountDetail.useQuery();
+  const [openDialog, setOpenDialog] = useState(false);
+  const [openCalendar, setOpenCalendar] = useState(false);
+  const [date, setDate] = useState<Date>();
+
+  const disabledDays: DateBefore = { before: new Date() };
 
   const formSchema = z
     .object({
@@ -53,6 +77,14 @@ export default function Transfer() {
             message: `Amount could not be higher than the transfer limit of ${details?.transfer_limit}.`,
           },
         ),
+      date: z
+        .date({
+          required_error: "Please select a date and time",
+          invalid_type_error: "That's not a date!",
+        })
+        .min(new Date(Date.now()), {
+          message: "Please select a valid date and time.",
+        }),
     })
     .required();
 
@@ -61,6 +93,7 @@ export default function Transfer() {
     defaultValues: {
       transfer_to: "",
       amount: "",
+      date: new Date(Date.now()),
     },
   });
 
@@ -154,20 +187,79 @@ export default function Transfer() {
                     "Transfer now"
                   )}
                 </Button>
-                <Button
-                  variant="secondary"
-                  type="submit"
-                  disabled={form.formState.isSubmitting}
-                >
-                  {form.formState.isSubmitting ? (
-                    <span className="flex items-center gap-1">
-                      <Loader2 className="h-6 w-6 animate-spin" />
-                      Scheduling
-                    </span>
-                  ) : (
-                    "Transfer later"
-                  )}
-                </Button>
+
+                <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+                  <DialogTrigger asChild>
+                    <Button
+                      variant="secondary"
+                      disabled={form.formState.isSubmitting}
+                    >
+                      {form.formState.isSubmitting ? (
+                        <span className="flex items-center gap-1">
+                          <Loader2 className="h-6 w-6 animate-spin" />
+                          Transferring
+                        </span>
+                      ) : (
+                        "Transfer later"
+                      )}
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Select the transfer date</DialogTitle>
+                    </DialogHeader>
+                    <DialogDescription>
+                      <Popover
+                        open={openCalendar}
+                        onOpenChange={setOpenCalendar}
+                      >
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-[240px] justify-start text-left font-normal",
+                              !date && "text-muted-foreground",
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {date ? (
+                              format(date, "PPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={date}
+                            onSelect={(e) => {
+                              setDate(e);
+                              setOpenCalendar(false);
+                            }}
+                            disabled={disabledDays}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                    </DialogDescription>
+                    <DialogFooter>
+                      <DialogClose asChild>
+                        <Button variant="destructive">Close</Button>
+                      </DialogClose>
+                      <DialogClose asChild>
+                        <Button
+                          onClick={(e) => {
+                            form.handleSubmit(onSubmit)(e);
+                            setOpenDialog(false);
+                          }}
+                        >
+                          Confirm
+                        </Button>
+                      </DialogClose>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
             </>
           )}
