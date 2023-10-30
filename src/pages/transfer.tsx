@@ -119,8 +119,20 @@ export default function Transfer() {
       });
   };
 
+  const scheduleTransfer = async (values: z.infer<typeof formSchema>) => {
+    const schedule = require("node-schedule");
+    const job = schedule.scheduleJob(
+      values.date,
+      function (values: z.infer<typeof formSchema>) {
+        transfer(values);
+      }.bind(null, values),
+    );
+    toast.success(`Transfer scheduled on ${format(values.date, "PPP")}.`);
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    if (values.date != currentDate) return await transfer(values);
+    if (values.date != currentDate) return await scheduleTransfer(values);
+    return await transfer(values);
   };
 
   return (
@@ -235,15 +247,27 @@ export default function Transfer() {
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={date}
-                            onSelect={(e) => {
-                              setDate(e);
-                              setOpenCalendar(false);
-                            }}
-                            disabled={disabledDays}
-                            initialFocus
+                          <FormField
+                            control={form.control}
+                            name="date"
+                            render={({ field: { onChange, value } }) => (
+                              <FormItem className="flex flex-col">
+                                <FormControl>
+                                  <Calendar
+                                    mode="single"
+                                    selected={value}
+                                    onSelect={(e) => {
+                                      onChange(e);
+                                      setDate(e);
+                                      setOpenCalendar(false);
+                                    }}
+                                    disabled={disabledDays}
+                                    initialFocus
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
                           />
                         </PopoverContent>
                       </Popover>
