@@ -45,6 +45,7 @@ export default function CreateAccountButton({
             <AlertDialogAction
               onClick={() =>
                 createAccount().then((account_id) => {
+                  utils.account.list.reset();
                   changeAccount(account_id);
                   resetDataOnAccountChange(utils);
                   toast.success("Succesfully created account.");
